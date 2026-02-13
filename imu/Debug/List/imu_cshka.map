@@ -1,0 +1,347 @@
+###############################################################################
+#
+# IAR ELF Linker V9.10.2.313/W64 for ARM                  12/Feb/2026  18:30:43
+# Copyright 2007-2021 IAR Systems AB.
+#
+#    Output file  =  H:\projects\imu\Debug\Exe\imu_cshka.out
+#    Map file     =  H:\projects\imu\Debug\List\imu_cshka.map
+#    Command line =
+#        -f H:\projects\imu\Debug\Exe\imu_cshka.out.rsp
+#        (H:\projects\imu\Debug\Obj\main.o
+#        H:\projects\imu\Debug\Obj\startup_stm32g431xx.o
+#        H:\projects\imu\Debug\Obj\system_stm32g4xx.o --no_out_extension -o
+#        H:\projects\imu\Debug\Exe\imu_cshka.out --redirect
+#        _Printf=_PrintfFullNoMb --redirect _Scanf=_ScanfFullNoMb --map
+#        H:\projects\imu\Debug\List\imu_cshka.map --config
+#        H:\IAR\arm\config\linker\ST\stm32g431xB.icf --semihosting --entry
+#        __iar_program_start --vfe --text_out locale)
+#
+###############################################################################
+
+*******************************************************************************
+*** RUNTIME MODEL ATTRIBUTES
+***
+
+CppFlavor       = *
+__SystemLibrary = DLib
+__dlib_version  = 6
+
+
+*******************************************************************************
+*** HEAP SELECTION
+***
+
+The basic heap was selected because no calls to memory allocation
+functions were found in the application outside of system library
+functions, and there are calls to deallocation functions in the
+application.
+
+
+*******************************************************************************
+*** PLACEMENT SUMMARY
+***
+
+"A0":  place at address 0x800'0000 { ro section .intvec };
+"P1":  place in [from 0x800'0000 to 0x801'ffff] { ro };
+define block CSTACK with size = 2K, alignment = 8 { };
+define block PROC_STACK with size = 0, alignment = 8 { };
+define block HEAP with size = 4K, alignment = 8 { };
+"P3":  place in [from 0x2000'0000 to 0x2000'3fff] |
+                [from 0x2000'4000 to 0x2000'57ff] {
+          rw, block CSTACK, block PROC_STACK, block HEAP };
+initialize by copy { rw };
+
+No sections matched the following patterns:
+
+  ro section otp_data  in "P4"
+  section .textrw      in "P2"
+
+
+  Section            Kind         Address   Size  Object
+  -------            ----         -------   ----  ------
+"A0":                                      0x1d8
+  .intvec            ro code   0x800'0000  0x1d8  startup_stm32g431xx.o [1]
+                             - 0x800'01d8  0x1d8
+
+"P1":                                      0xb00
+  .text              ro code   0x800'01d8  0x86c  main.o [1]
+  .text              ro code   0x800'0a44   0x38  zero_init3.o [4]
+  .text              ro code   0x800'0a7c   0x2a  copy_init3.o [4]
+  .text              ro code   0x800'0aa8   0x28  data_init.o [4]
+  .text              ro code   0x800'0ad0   0x22  fpinit_M.o [3]
+  .iar.init_table    const     0x800'0af4   0x24  - Linker created -
+  .text              ro code   0x800'0b18   0x1e  cmain.o [4]
+  .text              ro code   0x800'0b36    0x4  low_level_init.o [2]
+  .text              ro code   0x800'0b3a    0x4  exit.o [2]
+  .text              ro code   0x800'0b40    0xa  cexit.o [4]
+  .text              ro code   0x800'0b4c   0x14  exit.o [5]
+  .text              ro code   0x800'0b60   0x1c  cstartup_M.o [4]
+  .text              ro code   0x800'0b7c   0x14  system_stm32g4xx.o [1]
+  .text              ro code   0x800'0b90   0x10  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0ba0    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0ba4    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0ba8    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bac    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bb0    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bb4    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bb8    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bbc    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bc0    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bc4    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bc8    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bcc    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bd0    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bd4    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bd8    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bdc    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0be0    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0be4    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0be8    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bec    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bf0    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bf4    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bf8    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0bfc    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c00    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c04    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c08    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c0c    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c10    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c14    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c18    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c1c    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c20    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c24    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c28    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c2c    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c30    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c34    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c38    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c3c    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c40    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c44    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c48    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c4c    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c50    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c54    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c58    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c5c    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c60    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c64    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c68    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c6c    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c70    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c74    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c78    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c7c    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c80    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c84    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c88    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c8c    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c90    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c94    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c98    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0c9c    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0ca0    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0ca4    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0ca8    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0cac    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0cb0    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0cb4    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0cb8    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0cbc    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0cc0    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0cc4    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0cc8    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0ccc    0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x800'0cd0    0x4  startup_stm32g431xx.o [1]
+  .rodata            const     0x800'0cd4    0x0  zero_init3.o [4]
+  .rodata            const     0x800'0cd4    0x0  copy_init3.o [4]
+  Initializer bytes  const     0x800'0cd4    0x4  <for P3 s0>
+                             - 0x800'0cd8  0xb00
+
+"P3", part 1 of 3:                           0x4
+  P3 s0                       0x2000'0000    0x4  <Init block>
+    .data            inited   0x2000'0000    0x4  system_stm32g4xx.o [1]
+                            - 0x2000'0004    0x4
+
+"P3", part 2 of 3:                          0x68
+  .bss               zero     0x2000'0004   0x20  main.o [1]
+  .bss               zero     0x2000'0024   0x1c  main.o [1]
+  .bss               zero     0x2000'0040    0x4  main.o [1]
+  .bss               zero     0x2000'0044    0x4  main.o [1]
+  .bss               zero     0x2000'0048    0x4  main.o [1]
+  .bss               zero     0x2000'004c    0x4  main.o [1]
+  .bss               zero     0x2000'0050    0x4  main.o [1]
+  .bss               zero     0x2000'0054    0x4  main.o [1]
+  .bss               zero     0x2000'0058    0x2  main.o [1]
+  .bss               zero     0x2000'005a    0x2  main.o [1]
+  .bss               zero     0x2000'005c    0x2  main.o [1]
+  .bss               zero     0x2000'005e    0x2  main.o [1]
+  .bss               zero     0x2000'0060    0x2  main.o [1]
+  .bss               zero     0x2000'0062    0x2  main.o [1]
+  .bss               zero     0x2000'0064    0x1  main.o [1]
+  .bss               zero     0x2000'0065    0x1  main.o [1]
+  .bss               zero     0x2000'0066    0x1  main.o [1]
+  .bss               zero     0x2000'0067    0x1  main.o [1]
+  .bss               zero     0x2000'0068    0x1  main.o [1]
+                            - 0x2000'0069   0x65
+
+"P3", part 3 of 3:                         0x800
+  CSTACK                      0x2000'0070  0x800  <Block>
+    CSTACK           uninit   0x2000'0070  0x800  <Block tail>
+                            - 0x2000'0870  0x800
+
+Unused ranges:
+
+         From           To      Size
+         ----           --      ----
+   0x800'0cd8   0x801'ffff  0x1'f328
+  0x2000'006c  0x2000'006f       0x4
+  0x2000'0870  0x2000'3fff    0x3790
+  0x2000'4000  0x2000'57ff    0x1800
+
+
+*******************************************************************************
+*** INIT TABLE
+***
+
+          Address      Size
+          -------      ----
+Zero (__iar_zero_init3)
+    1 destination range, total size 0x65:
+          0x2000'0004  0x65
+
+Copy (__iar_copy_init3)
+    1 source range, total size 0x4:
+           0x800'0cd4   0x4
+    1 destination range, total size 0x4:
+          0x2000'0000   0x4
+
+
+
+*******************************************************************************
+*** MODULE SUMMARY
+***
+
+    Module                 ro code  ro data  rw data
+    ------                 -------  -------  -------
+command line/config:
+    ------------------------------------------------
+    Total:
+
+H:\projects\imu\Debug\Obj: [1]
+    main.o                   2'156               101
+    startup_stm32g431xx.o      796
+    system_stm32g4xx.o          20        4        4
+    ------------------------------------------------
+    Total:                   2'972        4      105
+
+dl7M_tln.a: [2]
+    exit.o                       4
+    low_level_init.o             4
+    ------------------------------------------------
+    Total:                       8
+
+m7M_tls.a: [3]
+    fpinit_M.o                  34
+    ------------------------------------------------
+    Total:                      34
+
+rt7M_tl.a: [4]
+    cexit.o                     10
+    cmain.o                     30
+    copy_init3.o                42
+    cstartup_M.o                28
+    data_init.o                 40
+    zero_init3.o                56
+    ------------------------------------------------
+    Total:                     206
+
+shb_l.a: [5]
+    exit.o                      20
+    ------------------------------------------------
+    Total:                      20
+
+    Gaps                         6        2
+    Linker created                       36    2'048
+----------------------------------------------------
+    Grand Total:             3'246       42    2'153
+
+
+*******************************************************************************
+*** ENTRY LIST
+***
+
+Entry                       Address   Size  Type      Object
+-----                       -------   ----  ----      ------
+.iar.init_table$$Base    0x800'0af4          --   Gb  - Linker created -
+.iar.init_table$$Limit   0x800'0b18          --   Gb  - Linker created -
+?main                    0x800'0b19         Code  Gb  cmain.o [4]
+CSTACK$$Base            0x2000'0070          --   Gb  - Linker created -
+CSTACK$$Limit           0x2000'0870          --   Gb  - Linker created -
+I2C1_Init                0x800'06a7   0x7e  Code  Gb  main.o [1]
+I2C_ReadMulti            0x800'0771   0x6c  Code  Gb  main.o [1]
+I2C_ReadReg              0x800'0725   0x4c  Code  Gb  main.o [1]
+IMU_Init                 0x800'082f   0x26  Code  Gb  main.o [1]
+IMU_ReadAccelGyro        0x800'0855   0x78  Code  Gb  main.o [1]
+IMU_SetBank              0x800'081f   0x10  Code  Lc  main.o [1]
+IMU_WriteReg             0x800'07dd   0x42  Code  Lc  main.o [1]
+LPUART1_IRQHandler       0x800'0615   0x92  Code  Gb  main.o [1]
+LPUART1_SBUS_Init        0x800'0507  0x10e  Code  Gb  main.o [1]
+Region$$Table$$Base      0x800'0af4          --   Gb  - Linker created -
+Region$$Table$$Limit     0x800'0b18          --   Gb  - Linker created -
+SBUS_Decode              0x800'027d  0x28a  Code  Gb  main.o [1]
+SysTick_Config           0x800'021f   0x34  Code  Lc  main.o [1]
+SysTick_Handler          0x800'026d   0x10  Code  Gb  main.o [1]
+SystemCoreClock         0x2000'0000    0x4  Data  Gb  system_stm32g4xx.o [1]
+SystemInit               0x800'0b7d    0xe  Code  Gb  system_stm32g4xx.o [1]
+__NVIC_EnableIRQ         0x800'01d9   0x1e  Code  Lc  main.o [1]
+__NVIC_SetPriority       0x800'01f7   0x28  Code  Lc  main.o [1]
+__cmain                  0x800'0b19         Code  Gb  cmain.o [4]
+__exit                   0x800'0b4d   0x14  Code  Gb  exit.o [5]
+__iar_copy_init3         0x800'0a7d   0x2a  Code  Gb  copy_init3.o [4]
+__iar_data_init3         0x800'0aa9   0x28  Code  Gb  data_init.o [4]
+__iar_init_vfp           0x800'0ad1         Code  Gb  fpinit_M.o [3]
+__iar_program_start      0x800'0b61         Code  Gb  cstartup_M.o [4]
+__iar_zero_init3         0x800'0a45   0x38  Code  Gb  zero_init3.o [4]
+__low_level_init         0x800'0b37    0x4  Code  Gb  low_level_init.o [2]
+__vector_table           0x800'0000         Data  Gb  startup_stm32g431xx.o [1]
+_call_main               0x800'0b25         Code  Gb  cmain.o [4]
+_exit                    0x800'0b41         Code  Gb  cexit.o [4]
+delay_long               0x800'0253   0x1a  Code  Lc  main.o [1]
+exit                     0x800'0b3b    0x4  Code  Gb  exit.o [2]
+imu_ax                  0x2000'0058    0x2  Data  Gb  main.o [1]
+imu_ay                  0x2000'005a    0x2  Data  Gb  main.o [1]
+imu_az                  0x2000'005c    0x2  Data  Gb  main.o [1]
+imu_gx                  0x2000'005e    0x2  Data  Gb  main.o [1]
+imu_gy                  0x2000'0060    0x2  Data  Gb  main.o [1]
+imu_gz                  0x2000'0062    0x2  Data  Gb  main.o [1]
+imu_whoami              0x2000'0068    0x1  Data  Gb  main.o [1]
+main                     0x800'08cd   0xa8  Code  Gb  main.o [1]
+ms                      0x2000'0048    0x4  Data  Gb  main.o [1]
+parser_state            0x2000'0067    0x1  Data  Gb  main.o [1]
+rc_channels             0x2000'0004   0x20  Data  Gb  main.o [1]
+rx_buffer               0x2000'0024   0x1c  Data  Gb  main.o [1]
+rx_idx                  0x2000'0066    0x1  Data  Gb  main.o [1]
+sbus_decode_errors      0x2000'0044    0x4  Data  Gb  main.o [1]
+sbus_failsafe           0x2000'0064    0x1  Data  Gb  main.o [1]
+sbus_frame_lost         0x2000'0065    0x1  Data  Gb  main.o [1]
+sbus_hz                 0x2000'0050    0x4  Data  Gb  main.o [1]
+sbus_hz_counter         0x2000'0054    0x4  Data  Gb  main.o [1]
+sbus_last_byte_time     0x2000'004c    0x4  Data  Gb  main.o [1]
+sbus_packets_ok         0x2000'0040    0x4  Data  Gb  main.o [1]
+
+
+[1] = H:\projects\imu\Debug\Obj
+[2] = dl7M_tln.a
+[3] = m7M_tls.a
+[4] = rt7M_tl.a
+[5] = shb_l.a
+
+  3'246 bytes of readonly  code memory
+     42 bytes of readonly  data memory
+  2'153 bytes of readwrite data memory
+
+Errors: none
+Warnings: none

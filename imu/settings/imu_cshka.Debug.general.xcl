@@ -1,0 +1,15 @@
+"H:\IAR\arm\bin\armPROC.dll" 
+
+"H:\IAR\arm\bin\armSTLINK.dll" 
+
+"H:\projects\imu\Debug\Exe\imu_cshka.out" 
+
+--plugin="H:\IAR\arm\bin\armbat.dll" 
+
+--device_macro="H:\IAR\arm\config\debugger\ST\STM32G4xx.dmac" 
+
+--flash_loader="H:\IAR\arm\config\flashloader\ST\FlashSTM32G43xxB.board" 
+
+
+
+

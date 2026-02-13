@@ -1,0 +1,658 @@
+pwm
+#include "stm32g4xx.h"
+#include <stdint.h>
+
+// === SBUS ГЛОБАЛЬНЫЕ ===
+volatile uint16_t rc_channels[16];
+volatile uint8_t sbus_failsafe = 0;
+volatile uint8_t sbus_frame_lost = 0;
+
+volatile uint8_t rx_buffer[25];
+volatile uint8_t rx_idx = 0;
+volatile uint8_t parser_state = 0;
+
+volatile uint32_t ms = 0;
+volatile uint32_t sbus_last_byte_time = 0;
+
+// === SysTick ===
+void SysTick_Handler(void)
+{
+    ms++;
+}
+
+// === ЗАДЕРЖКА ===
+static void delay_long(int limit) {
+    for (volatile int i = 0; i < limit; i++) __NOP();
+}
+
+// === SBUS ДЕКОДЕР ===
+void SBUS_Decode(void)
+{
+    if (rx_buffer[0] != 0x0F || rx_buffer[24] != 0x00)
+        return;
+
+    rc_channels[0]  = ((rx_buffer[1]    | rx_buffer[2] << 8)                 & 0x07FF);
+    rc_channels[1]  = ((rx_buffer[2]>>3 | rx_buffer[3] << 5)                 & 0x07FF);
+    rc_channels[2]  = ((rx_buffer[3]>>6 | rx_buffer[4] << 2 | rx_buffer[5] << 10) & 0x07FF);
+    rc_channels[3]  = ((rx_buffer[5]>>1 | rx_buffer[6] << 7)                 & 0x07FF);
+    rc_channels[4]  = ((rx_buffer[6]>>4 | rx_buffer[7] << 4)                 & 0x07FF);
+    rc_channels[5]  = ((rx_buffer[7]>>7 | rx_buffer[8] << 1 | rx_buffer[9] << 9)  & 0x07FF);
+    rc_channels[6]  = ((rx_buffer[9]>>2 | rx_buffer[10] << 6)                & 0x07FF);
+    rc_channels[7]  = ((rx_buffer[10]>>5| rx_buffer[11] << 3)                & 0x07FF);
+    rc_channels[8]  = ((rx_buffer[12]   | rx_buffer[13] << 8)                & 0x07FF);
+    rc_channels[9]  = ((rx_buffer[13]>>3| rx_buffer[14] << 5)                & 0x07FF);
+    rc_channels[10] = ((rx_buffer[14]>>6| rx_buffer[15] << 2 | rx_buffer[16] << 10) & 0x07FF);
+    rc_channels[11] = ((rx_buffer[16]>>1| rx_buffer[17] << 7)                & 0x07FF);
+    rc_channels[12] = ((rx_buffer[17]>>4| rx_buffer[18] << 4)                & 0x07FF);
+    rc_channels[13] = ((rx_buffer[18]>>7| rx_buffer[19] << 1 | rx_buffer[20] << 9)  & 0x07FF);
+    rc_channels[14] = ((rx_buffer[20]>>2| rx_buffer[21] << 6)                & 0x07FF);
+    rc_channels[15] = ((rx_buffer[21]>>5| rx_buffer[22] << 3)                & 0x07FF);
+}
+
+// === SBUS UART (PA3, AF12) ===
+void LPUART1_SBUS_Init(void)
+{
+    RCC->AHB2ENR  |= RCC_AHB2ENR_GPIOAEN;
+    RCC->APB1ENR2 |= RCC_APB1ENR2_LPUART1EN;
+
+    GPIOA->MODER &= ~(GPIO_MODER_MODE3);
+    GPIOA->MODER |=  GPIO_MODER_MODE3_1;
+    GPIOA->AFR[0] &= ~(0xF << 12);
+    GPIOA->AFR[0] |=  (12 << 12);
+
+    LPUART1->CR1 = 0;
+    LPUART1->CR2 = 0;
+    LPUART1->CR3 = 0;
+
+    LPUART1->BRR = SystemCoreClock / (100000 / 256);
+
+    LPUART1->CR1 |= USART_CR1_PCE | USART_CR1_PS;
+    LPUART1->CR2 |= USART_CR2_RXINV | USART_CR2_STOP_1;
+
+    LPUART1->CR1 |= USART_CR1_RXNEIE;
+    LPUART1->CR1 |= USART_CR1_RE | USART_CR1_UE;
+
+    NVIC_EnableIRQ(LPUART1_IRQn);
+    NVIC_SetPriority(LPUART1_IRQn, 1);
+}
+
+// === SBUS IRQ ===
+void LPUART1_IRQHandler(void)
+{
+    if (LPUART1->ISR & USART_ISR_RXNE)
+    {
+        uint8_t data = (uint8_t)LPUART1->RDR;
+        sbus_last_byte_time = ms;
+
+        if (parser_state == 0) {
+            if (data == 0x0F) {
+                rx_buffer[0] = data;
+                rx_idx = 1;
+                parser_state = 1;
+            }
+        } else {
+            rx_buffer[rx_idx++] = data;
+
+            if (rx_idx >= 25) {
+                SBUS_Decode();
+                parser_state = 0;
+                rx_idx = 0;
+            }
+        }
+    }
+
+    if (LPUART1->ISR & (USART_ISR_ORE | USART_ISR_NE | USART_ISR_FE | USART_ISR_PE)) {
+        LPUART1->ICR = USART_ICR_ORECF | USART_ICR_NECF |
+                       USART_ICR_FECF | USART_ICR_PECF;
+    }
+}
+
+// === МОТОРЫ (из imu_pwm.txt) ===
+void Motors_Init(void) {
+    RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
+    RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN;
+    RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+
+    GPIOA->MODER &= ~(GPIO_MODER_MODE0 | GPIO_MODER_MODE1);
+    GPIOA->MODER |= (GPIO_MODER_MODE0_1 | GPIO_MODER_MODE1_1);
+    GPIOA->AFR[0] &= ~((0xF << 0) | (0xF << 4));
+    GPIOA->AFR[0] |= ((1 << 0) | (1 << 4));
+
+    GPIOA->MODER &= ~(GPIO_MODER_MODE10 | GPIO_MODER_MODE11);
+    GPIOA->MODER |= (GPIO_MODER_MODE10_1 | GPIO_MODER_MODE11_1);
+    GPIOA->AFR[1] &= ~((0xF << 8) | (0xF << 12));
+    GPIOA->AFR[1] |= ((6 << 8) | (11 << 12));
+
+    TIM2->PSC = 16 - 1;
+    TIM2->ARR = 10000 - 1;
+    TIM2->CCMR1 = 0x6060;
+    TIM2->CCER = 0x11;
+    TIM2->CR1 = TIM_CR1_CEN;
+
+    TIM1->PSC = 16 - 1;
+    TIM1->ARR = 10000 - 1;
+    TIM1->CCMR2 = 0x6060;
+    TIM1->CCER = 0x1100;
+    TIM1->BDTR |= TIM_BDTR_MOE;
+    TIM1->CR1 = TIM_CR1_CEN;
+}
+
+void Set_Motors(int val) {
+    TIM2->CCR1 = val;
+    TIM2->CCR2 = val;
+    TIM1->CCR3 = val;
+    TIM1->CCR4 = val;
+}
+
+// === MAIN ===
+int main(void)
+{
+    RCC->CR |= RCC_CR_HSION;
+    while(!(RCC->CR & RCC_CR_HSIRDY));
+
+    SysTick_Config(SystemCoreClock / 1000U);
+
+    LPUART1_SBUS_Init();
+    Motors_Init();
+
+    Set_Motors(1050);
+    delay_long(6000000);
+
+    uint8_t armed = 0;
+
+    while (1)
+    {
+        if (ms - sbus_last_byte_time > 30U) {
+            parser_state = 0;
+            rx_idx = 0;
+        }
+
+        uint16_t thr = rc_channels[2];
+        uint16_t arm = rc_channels[4];
+
+        if (arm > 1500)
+            armed = 1;
+        else
+            armed = 0;
+
+        if (!armed) {
+            Set_Motors(1050);
+            continue;
+        }
+
+        int pwm = thr;
+        if (pwm < 1050) pwm = 1050;
+        if (pwm > 2000) pwm = 2000;
+
+        Set_Motors(pwm);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+pwm + мягкий старт 
+#include "stm32g4xx.h"
+#include <stdint.h>
+
+
+
+int current_pwm = 900;   // для плавного старта
+
+// === SBUS ГЛОБАЛЬНЫЕ ===
+volatile uint16_t rc_channels[16];
+volatile uint8_t sbus_failsafe = 0;
+volatile uint8_t sbus_frame_lost = 0;
+
+volatile uint8_t rx_buffer[25];
+volatile uint8_t rx_idx = 0;
+volatile uint8_t parser_state = 0;
+
+volatile uint32_t ms = 0;
+volatile uint32_t sbus_last_byte_time = 0;
+
+// === SysTick ===
+void SysTick_Handler(void)
+{
+    ms++;
+}
+
+// === ЗАДЕРЖКА ===
+static void delay_long(int limit) {
+    for (volatile int i = 0; i < limit; i++) __NOP();
+}
+
+// === SBUS ДЕКОДЕР ===
+void SBUS_Decode(void)
+{
+    if (rx_buffer[0] != 0x0F || rx_buffer[24] != 0x00)
+        return;
+
+    rc_channels[0]  = ((rx_buffer[1]    | rx_buffer[2] << 8)                 & 0x07FF);
+    rc_channels[1]  = ((rx_buffer[2]>>3 | rx_buffer[3] << 5)                 & 0x07FF);
+    rc_channels[2]  = ((rx_buffer[3]>>6 | rx_buffer[4] << 2 | rx_buffer[5] << 10) & 0x07FF);
+    rc_channels[3]  = ((rx_buffer[5]>>1 | rx_buffer[6] << 7)                 & 0x07FF);
+    rc_channels[4]  = ((rx_buffer[6]>>4 | rx_buffer[7] << 4)                 & 0x07FF);
+    rc_channels[5]  = ((rx_buffer[7]>>7 | rx_buffer[8] << 1 | rx_buffer[9] << 9)  & 0x07FF);
+    rc_channels[6]  = ((rx_buffer[9]>>2 | rx_buffer[10] << 6)                & 0x07FF);
+    rc_channels[7]  = ((rx_buffer[10]>>5| rx_buffer[11] << 3)                & 0x07FF);
+    rc_channels[8]  = ((rx_buffer[12]   | rx_buffer[13] << 8)                & 0x07FF);
+    rc_channels[9]  = ((rx_buffer[13]>>3| rx_buffer[14] << 5)                & 0x07FF);
+    rc_channels[10] = ((rx_buffer[14]>>6| rx_buffer[15] << 2 | rx_buffer[16] << 10) & 0x07FF);
+    rc_channels[11] = ((rx_buffer[16]>>1| rx_buffer[17] << 7)                & 0x07FF);
+    rc_channels[12] = ((rx_buffer[17]>>4| rx_buffer[18] << 4)                & 0x07FF);
+    rc_channels[13] = ((rx_buffer[18]>>7| rx_buffer[19] << 1 | rx_buffer[20] << 9)  & 0x07FF);
+    rc_channels[14] = ((rx_buffer[20]>>2| rx_buffer[21] << 6)                & 0x07FF);
+    rc_channels[15] = ((rx_buffer[21]>>5| rx_buffer[22] << 3)                & 0x07FF);
+}
+
+// === SBUS UART (PA3, AF12) ===
+void LPUART1_SBUS_Init(void)
+{
+    RCC->AHB2ENR  |= RCC_AHB2ENR_GPIOAEN;
+    RCC->APB1ENR2 |= RCC_APB1ENR2_LPUART1EN;
+
+    GPIOA->MODER &= ~(GPIO_MODER_MODE3);
+    GPIOA->MODER |=  GPIO_MODER_MODE3_1;
+    GPIOA->AFR[0] &= ~(0xF << 12);
+    GPIOA->AFR[0] |=  (12 << 12);
+
+    LPUART1->CR1 = 0;
+    LPUART1->CR2 = 0;
+    LPUART1->CR3 = 0;
+
+    LPUART1->BRR = SystemCoreClock / (100000 / 256);
+
+    LPUART1->CR1 |= USART_CR1_PCE | USART_CR1_PS;
+    LPUART1->CR2 |= USART_CR2_RXINV | USART_CR2_STOP_1;
+
+    LPUART1->CR1 |= USART_CR1_RXNEIE;
+    LPUART1->CR1 |= USART_CR1_RE | USART_CR1_UE;
+
+    NVIC_EnableIRQ(LPUART1_IRQn);
+    NVIC_SetPriority(LPUART1_IRQn, 1);
+}
+
+// === SBUS IRQ ===
+void LPUART1_IRQHandler(void)
+{
+    if (LPUART1->ISR & USART_ISR_RXNE)
+    {
+        uint8_t data = (uint8_t)LPUART1->RDR;
+        sbus_last_byte_time = ms;
+
+        if (parser_state == 0) {
+            if (data == 0x0F) {
+                rx_buffer[0] = data;
+                rx_idx = 1;
+                parser_state = 1;
+            }
+        } else {
+            rx_buffer[rx_idx++] = data;
+
+            if (rx_idx >= 25) {
+                SBUS_Decode();
+                parser_state = 0;
+                rx_idx = 0;
+            }
+        }
+    }
+
+    if (LPUART1->ISR & (USART_ISR_ORE | USART_ISR_NE | USART_ISR_FE | USART_ISR_PE)) {
+        LPUART1->ICR = USART_ICR_ORECF | USART_ICR_NECF |
+                       USART_ICR_FECF | USART_ICR_PECF;
+    }
+}
+
+// === МОТОРЫ (из imu_pwm.txt) ===
+void Motors_Init(void) {
+    RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
+    RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN;
+    RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+
+    GPIOA->MODER &= ~(GPIO_MODER_MODE0 | GPIO_MODER_MODE1);
+    GPIOA->MODER |= (GPIO_MODER_MODE0_1 | GPIO_MODER_MODE1_1);
+    GPIOA->AFR[0] &= ~((0xF << 0) | (0xF << 4));
+    GPIOA->AFR[0] |= ((1 << 0) | (1 << 4));
+
+    GPIOA->MODER &= ~(GPIO_MODER_MODE10 | GPIO_MODER_MODE11);
+    GPIOA->MODER |= (GPIO_MODER_MODE10_1 | GPIO_MODER_MODE11_1);
+    GPIOA->AFR[1] &= ~((0xF << 8) | (0xF << 12));
+    GPIOA->AFR[1] |= ((6 << 8) | (11 << 12));
+
+    TIM2->PSC = 16 - 1;
+    TIM2->ARR = 10000 - 1;
+    TIM2->CCMR1 = 0x6060;
+    TIM2->CCER = 0x11;
+    TIM2->CR1 = TIM_CR1_CEN;
+
+    TIM1->PSC = 16 - 1;
+    TIM1->ARR = 10000 - 1;
+    TIM1->CCMR2 = 0x6060;
+    TIM1->CCER = 0x1100;
+    TIM1->BDTR |= TIM_BDTR_MOE;
+    TIM1->CR1 = TIM_CR1_CEN;
+}
+
+void Set_Motors(int val) {
+    TIM2->CCR1 = val;
+    TIM2->CCR2 = val;
+    TIM1->CCR3 = val;
+    TIM1->CCR4 = val;
+}
+
+// === MAIN ===
+int main(void)
+{
+    RCC->CR |= RCC_CR_HSION;
+    while(!(RCC->CR & RCC_CR_HSIRDY));
+
+    SysTick_Config(SystemCoreClock / 1000U);
+
+    LPUART1_SBUS_Init();
+    Motors_Init();
+
+    Set_Motors(1000);
+    delay_long(6000000);
+
+    uint8_t armed = 0;
+
+    while (1)
+    {
+        if (ms - sbus_last_byte_time > 30U) {
+            parser_state = 0;
+            rx_idx = 0;
+        }
+
+        uint16_t thr = rc_channels[2];
+        uint16_t arm = rc_channels[4];
+
+        if (arm > 1500)
+            armed = 1;
+        else
+            armed = 0;
+
+        if (!armed) {
+    current_pwm = 900;        // сбрасываем плавный старт
+    Set_Motors(900);
+    continue;
+        }
+
+      if (!armed) {
+        current_pwm = 900;        // сбрасываем плавный старт
+        Set_Motors(900);
+        continue;
+        }
+
+    // --- МЯГКИЙ СТАРТ ---
+      if (current_pwm < 1050)
+        {
+    current_pwm += 2;         // скорость подъёма (2 → ~300–400 мс)
+    Set_Motors(current_pwm);
+    continue;
+        }
+    // ---------------------
+
+    // После мягкого старта — обычный throttle
+      int pwm = thr;
+      if (pwm < 1050) pwm = 1050;
+      if (pwm > 2000) pwm = 2000;
+
+      current_pwm = pwm;
+      Set_Motors(current_pwm);
+
+
+    }
+}
+
+
+
+
+
+pwm + мягкий старт 2.0
+#include "stm32g4xx.h"
+#include <stdint.h>
+
+
+
+int current_pwm = 900;   // для плавного старта
+uint8_t softstart_done = 0;
+
+// === SBUS ГЛОБАЛЬНЫЕ ===
+volatile uint16_t rc_channels[16];
+volatile uint8_t sbus_failsafe = 0;
+volatile uint8_t sbus_frame_lost = 0;
+
+volatile uint8_t rx_buffer[25];
+volatile uint8_t rx_idx = 0;
+volatile uint8_t parser_state = 0;
+
+volatile uint32_t ms = 0;
+volatile uint32_t sbus_last_byte_time = 0;
+
+// === SysTick ===
+void SysTick_Handler(void)
+{
+    ms++;
+}
+
+// === ЗАДЕРЖКА ===
+static void delay_long(int limit) {
+    for (volatile int i = 0; i < limit; i++) __NOP();
+}
+
+// === SBUS ДЕКОДЕР ===
+void SBUS_Decode(void)
+{
+    if (rx_buffer[0] != 0x0F || rx_buffer[24] != 0x00)
+        return;
+
+    rc_channels[0]  = ((rx_buffer[1]    | rx_buffer[2] << 8)                 & 0x07FF);
+    rc_channels[1]  = ((rx_buffer[2]>>3 | rx_buffer[3] << 5)                 & 0x07FF);
+    rc_channels[2]  = ((rx_buffer[3]>>6 | rx_buffer[4] << 2 | rx_buffer[5] << 10) & 0x07FF);
+    rc_channels[3]  = ((rx_buffer[5]>>1 | rx_buffer[6] << 7)                 & 0x07FF);
+    rc_channels[4]  = ((rx_buffer[6]>>4 | rx_buffer[7] << 4)                 & 0x07FF);
+    rc_channels[5]  = ((rx_buffer[7]>>7 | rx_buffer[8] << 1 | rx_buffer[9] << 9)  & 0x07FF);
+    rc_channels[6]  = ((rx_buffer[9]>>2 | rx_buffer[10] << 6)                & 0x07FF);
+    rc_channels[7]  = ((rx_buffer[10]>>5| rx_buffer[11] << 3)                & 0x07FF);
+    rc_channels[8]  = ((rx_buffer[12]   | rx_buffer[13] << 8)                & 0x07FF);
+    rc_channels[9]  = ((rx_buffer[13]>>3| rx_buffer[14] << 5)                & 0x07FF);
+    rc_channels[10] = ((rx_buffer[14]>>6| rx_buffer[15] << 2 | rx_buffer[16] << 10) & 0x07FF);
+    rc_channels[11] = ((rx_buffer[16]>>1| rx_buffer[17] << 7)                & 0x07FF);
+    rc_channels[12] = ((rx_buffer[17]>>4| rx_buffer[18] << 4)                & 0x07FF);
+    rc_channels[13] = ((rx_buffer[18]>>7| rx_buffer[19] << 1 | rx_buffer[20] << 9)  & 0x07FF);
+    rc_channels[14] = ((rx_buffer[20]>>2| rx_buffer[21] << 6)                & 0x07FF);
+    rc_channels[15] = ((rx_buffer[21]>>5| rx_buffer[22] << 3)                & 0x07FF);
+}
+
+// === SBUS UART (PA3, AF12) ===
+void LPUART1_SBUS_Init(void)
+{
+    RCC->AHB2ENR  |= RCC_AHB2ENR_GPIOAEN;
+    RCC->APB1ENR2 |= RCC_APB1ENR2_LPUART1EN;
+
+    GPIOA->MODER &= ~(GPIO_MODER_MODE3);
+    GPIOA->MODER |=  GPIO_MODER_MODE3_1;
+    GPIOA->AFR[0] &= ~(0xF << 12);
+    GPIOA->AFR[0] |=  (12 << 12);
+
+    LPUART1->CR1 = 0;
+    LPUART1->CR2 = 0;
+    LPUART1->CR3 = 0;
+
+    LPUART1->BRR = SystemCoreClock / (100000 / 256);
+
+    LPUART1->CR1 |= USART_CR1_PCE | USART_CR1_PS;
+    LPUART1->CR2 |= USART_CR2_RXINV | USART_CR2_STOP_1;
+
+    LPUART1->CR1 |= USART_CR1_RXNEIE;
+    LPUART1->CR1 |= USART_CR1_RE | USART_CR1_UE;
+
+    NVIC_EnableIRQ(LPUART1_IRQn);
+    NVIC_SetPriority(LPUART1_IRQn, 1);
+}
+
+// === SBUS IRQ ===
+void LPUART1_IRQHandler(void)
+{
+    if (LPUART1->ISR & USART_ISR_RXNE)
+    {
+        uint8_t data = (uint8_t)LPUART1->RDR;
+        sbus_last_byte_time = ms;
+
+        if (parser_state == 0) {
+            if (data == 0x0F) {
+                rx_buffer[0] = data;
+                rx_idx = 1;
+                parser_state = 1;
+            }
+        } else {
+            rx_buffer[rx_idx++] = data;
+
+            if (rx_idx >= 25) {
+                SBUS_Decode();
+                parser_state = 0;
+                rx_idx = 0;
+            }
+        }
+    }
+
+    if (LPUART1->ISR & (USART_ISR_ORE | USART_ISR_NE | USART_ISR_FE | USART_ISR_PE)) {
+        LPUART1->ICR = USART_ICR_ORECF | USART_ICR_NECF |
+                       USART_ICR_FECF | USART_ICR_PECF;
+    }
+}
+
+// === МОТОРЫ (из imu_pwm.txt) ===
+void Motors_Init(void) {
+    RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
+    RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN;
+    RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+
+    GPIOA->MODER &= ~(GPIO_MODER_MODE0 | GPIO_MODER_MODE1);
+    GPIOA->MODER |= (GPIO_MODER_MODE0_1 | GPIO_MODER_MODE1_1);
+    GPIOA->AFR[0] &= ~((0xF << 0) | (0xF << 4));
+    GPIOA->AFR[0] |= ((1 << 0) | (1 << 4));
+
+    GPIOA->MODER &= ~(GPIO_MODER_MODE10 | GPIO_MODER_MODE11);
+    GPIOA->MODER |= (GPIO_MODER_MODE10_1 | GPIO_MODER_MODE11_1);
+    GPIOA->AFR[1] &= ~((0xF << 8) | (0xF << 12));
+    GPIOA->AFR[1] |= ((6 << 8) | (11 << 12));
+
+    TIM2->PSC = 16 - 1;
+    TIM2->ARR = 10000 - 1;
+    TIM2->CCMR1 = 0x6060;
+    TIM2->CCER = 0x11;
+    TIM2->CR1 = TIM_CR1_CEN;
+
+    TIM1->PSC = 16 - 1;
+    TIM1->ARR = 10000 - 1;
+    TIM1->CCMR2 = 0x6060;
+    TIM1->CCER = 0x1100;
+    TIM1->BDTR |= TIM_BDTR_MOE;
+    TIM1->CR1 = TIM_CR1_CEN;
+}
+
+void Set_Motors(int val) {
+    TIM2->CCR1 = val;
+    TIM2->CCR2 = val;
+    TIM1->CCR3 = val;
+    TIM1->CCR4 = val;
+}
+
+// === MAIN ===
+int main(void)
+{
+    RCC->CR |= RCC_CR_HSION;
+    while(!(RCC->CR & RCC_CR_HSIRDY));
+
+    SysTick_Config(SystemCoreClock / 1000U);
+
+    LPUART1_SBUS_Init();
+    Motors_Init();
+
+    Set_Motors(1000);
+    delay_long(6000000);
+
+    uint8_t armed = 0;
+
+    while (1)
+    {
+        if (ms - sbus_last_byte_time > 30U) {
+            parser_state = 0;
+            rx_idx = 0;
+        }
+
+        uint16_t thr = rc_channels[2];
+        uint16_t arm = rc_channels[4];
+
+        // DISARM
+        if (arm <= 1500)
+        {
+            armed = 0;
+            softstart_done = 0;
+            current_pwm = 900;
+            Set_Motors(900);
+            continue;
+        }
+        else
+        {
+            armed = 1;
+        }
+
+          // ЕСЛИ ARM ВКЛЮЧЕН, НО МЯГКИЙ СТАРТ ЕЩЁ НЕ ПРОЙДЕН
+          if (!softstart_done)
+          {
+              if (current_pwm < 1050)
+              {
+                  current_pwm += 2;          // скорость старта
+                  if (current_pwm > 1050)
+                      current_pwm = 1050;
+
+                  Set_Motors(current_pwm);
+                  continue;                  // ВАЖНО: газ пока игнорируем
+              }
+              else
+              {
+                  softstart_done = 1;        // мягкий старт завершён
+              }
+          }
+
+          // ДАЛЬШЕ — ТОЛЬКО ГАЗ, БЕЗ МЯГКОГО СТАРТА
+          int pwm = thr;
+          if (pwm < 1050) pwm = 1050;
+          if (pwm > 2000) pwm = 2000;
+
+          Set_Motors(pwm);
+
+          }
+}
+

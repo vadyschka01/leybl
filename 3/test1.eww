@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspace>
+    <project>
+        <path>$WS_DIR$\3.ewp</path>
+    </project>
+    <project>
+        <path>$WS_DIR$\..\imu\imu_cshka.ewp</path>
+    </project>
+    <batchBuild />
+</workspace>

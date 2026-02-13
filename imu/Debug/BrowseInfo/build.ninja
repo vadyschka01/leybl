@@ -1,0 +1,51 @@
+##IAR Ninja build file
+
+
+#Rules
+rule COMPILER_XCL
+  command = H$:\IAR\common\bin\XclFileGenerator.exe $xclcommand -f "$rspfile_name"
+  description = IAR_NEW_TOOL+++COMPILER_XCL+++$in+++H$:\IAR\common\bin\XclFileGenerator.exe $flags
+  rspfile = $rspfile_name
+  rspfile_content = $flags
+
+rule INDEXER
+  command = H$:\IAR\common\bin\SourceIndexer.exe $flags
+  depfile = $out.dep
+  description = IAR_NEW_TOOL+++INDEXER+++$out+++H$:\IAR\common\bin\SourceIndexer.exe $flags
+
+rule MAKEBROWSE
+  command = H$:\IAR\common\bin\makeBrowseData.exe $flags
+  description = IAR_NEW_TOOL+++MAKEBROWSE+++$out+++H$:\IAR\common\bin\makeBrowseData.exe $flags
+
+rule PDBLINK
+  command = H$:\IAR\common\bin\PbdLink.exe $flags
+  description = IAR_NEW_TOOL+++PDBLINK+++$out+++H$:\IAR\common\bin\PbdLink.exe $flags
+
+
+
+#Build steps
+build H$:\projects\imu\Debug\BrowseInfo\main.xcl : COMPILER_XCL 
+  xclcommand = -source_file H$:\projects\imu\main.c -xcl_file H$:\projects\imu\Debug\BrowseInfo\main.xcl -macro_file H$:\projects\imu\Debug\BrowseInfo\main.tmp -icc_path H$:\IAR\arm\bin\iccarm.exe
+  flags = H$:\projects\imu\main.c -D STM32G431xx -o H$:\projects\imu\Debug\Obj\ --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling --debug --endian=little --cpu=Cortex-M4 -e --fpu=VFPv4_sp --dlib_config H$:\IAR\arm\inc\c\DLib_Config_Normal.h -I H$:\projects\imu\ -I H$:\IAR\arm\CMSIS\Core\Include\ -I H$:\projects\Drivers\CMSIS\ -Ol -I H$:\IAR\arm\CMSIS\Core\Include\ -I H$:\IAR\arm\CMSIS\DSP\Include\ --predef_macros H$:\projects\imu\Debug\BrowseInfo\main.tmp
+  rspfile_name = H$:\projects\imu\Debug\BrowseInfo\main.xcl.rsp
+
+build H$:\projects\imu\Debug\BrowseInfo\system_stm32g4xx.xcl : COMPILER_XCL 
+  xclcommand = -source_file H$:\загруз_10\system_stm32g4xx.c -xcl_file H$:\projects\imu\Debug\BrowseInfo\system_stm32g4xx.xcl -macro_file H$:\projects\imu\Debug\BrowseInfo\system_stm32g4xx.tmp -icc_path H$:\IAR\arm\bin\iccarm.exe
+  flags = H$:\загруз_10\system_stm32g4xx.c -D STM32G431xx -o H$:\projects\imu\Debug\Obj\ --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling --debug --endian=little --cpu=Cortex-M4 -e --fpu=VFPv4_sp --dlib_config H$:\IAR\arm\inc\c\DLib_Config_Normal.h -I H$:\projects\imu\ -I H$:\IAR\arm\CMSIS\Core\Include\ -I H$:\projects\Drivers\CMSIS\ -Ol -I H$:\IAR\arm\CMSIS\Core\Include\ -I H$:\IAR\arm\CMSIS\DSP\Include\ --predef_macros H$:\projects\imu\Debug\BrowseInfo\system_stm32g4xx.tmp
+  rspfile_name = H$:\projects\imu\Debug\BrowseInfo\system_stm32g4xx.xcl.rsp
+
+build H$:\projects\imu\Debug\BrowseInfo\main.pbi : INDEXER H$:\projects\imu\Debug\BrowseInfo\main.xcl |  $
+H$:\projects\imu\main.c
+  flags = -out=H$:\projects\imu\Debug\BrowseInfo\main.pbi -f H$:\projects\imu\Debug\BrowseInfo\main.xcl
+
+build H$:\projects\imu\Debug\BrowseInfo\system_stm32g4xx.pbi : INDEXER H$:\projects\imu\Debug\BrowseInfo\system_stm32g4xx.xcl |  $
+H$:\загруз_10\system_stm32g4xx.c
+  flags = -out=H$:\projects\imu\Debug\BrowseInfo\system_stm32g4xx.pbi -f H$:\projects\imu\Debug\BrowseInfo\system_stm32g4xx.xcl
+
+build H$:\projects\imu\Debug\BrowseInfo\imu_cshka.pbw : MAKEBROWSE H$:\projects\imu\Debug\BrowseInfo\imu_cshka.pbd
+  flags = H$:\projects\imu\Debug\BrowseInfo\imu_cshka.pbd -output H$:\projects\imu\Debug\BrowseInfo\imu_cshka.pbw
+
+build H$:\projects\imu\Debug\BrowseInfo\imu_cshka.pbd : PDBLINK H$:\projects\imu\Debug\BrowseInfo\main.pbi |  $
+H$:\projects\imu\Debug\BrowseInfo\system_stm32g4xx.pbi
+  flags = -M H$:\projects\imu\Debug\BrowseInfo\imu_cshka.pbd H$:\projects\imu\Debug\BrowseInfo\main.pbi H$:\projects\imu\Debug\BrowseInfo\system_stm32g4xx.pbi
+

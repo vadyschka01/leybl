@@ -1,0 +1,5 @@
+H:\projects\imu\Debug\BrowseInfo\main.pbi: \
+  H:\IAR\arm\inc\c\DLib_Product.h H:\IAR\arm\inc\c\DLib_Config_Normal.h \
+  H:\IAR\arm\inc\c\DLib_Defaults.h H:\IAR\arm\inc\c\yvals.h \
+  H:\IAR\arm\inc\c\ycheck.h H:\IAR\arm\inc\c\stdint.h \
+  H:\projects\imu\main.c

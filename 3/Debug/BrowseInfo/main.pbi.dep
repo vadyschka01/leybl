@@ -1,0 +1,13 @@
+H:\projects\3\Debug\BrowseInfo\main.pbi: H:\IAR\arm\inc\c\ycheck.h \
+  H:\IAR\arm\inc\c\ysizet.h H:\IAR\arm\inc\c\stdio.h \
+  H:\projects\3\system_stm32f4xx.h \
+  H:\IAR\arm\CMSIS\Core\Include\mpu_armv7.h \
+  H:\IAR\arm\inc\c\aarch32\iccarm_builtin.h \
+  H:\IAR\arm\CMSIS\Core\Include\cmsis_iccarm.h \
+  H:\IAR\arm\CMSIS\Core\Include\cmsis_compiler.h \
+  H:\IAR\arm\CMSIS\Core\Include\cmsis_version.h \
+  H:\IAR\arm\inc\c\DLib_Product.h H:\IAR\arm\inc\c\DLib_Config_Normal.h \
+  H:\IAR\arm\inc\c\DLib_Defaults.h H:\IAR\arm\inc\c\yvals.h \
+  H:\IAR\arm\inc\c\stdint.h H:\IAR\arm\CMSIS\Core\Include\core_cm4.h \
+  H:\projects\3\stm32f407xx.h H:\projects\3\stm32f4xx.h \
+  H:\projects\3\main.c
