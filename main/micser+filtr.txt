@@ -177,12 +177,23 @@ int main(void)
             Set_Motors(current_pwm);
             continue;
         }
+  
 
         // === НОРМАЛИЗАЦИЯ ===
         int thr_raw   = rc_channels[2];
         int roll_raw  = rc_channels[0];
         int pitch_raw = rc_channels[1];
         int yaw_raw   = rc_channels[3];
+
+        
+      /* if (thr_raw < 300) {   // _------
+            int idle = 1000;
+            TIM2->CCR1 = idle;
+            TIM2->CCR2 = idle;
+            TIM1->CCR3 = idle;
+            TIM1->CCR4 = idle;
+            continue;
+        }                      // ----- */
 
         const int ROLL_CENTER  = 1020;
         const int PITCH_CENTER = 1022;
@@ -195,10 +206,22 @@ int main(void)
         if (roll > -5 && roll < 5) roll = 0;
         if (pitch > -5 && pitch < 5) pitch = 0;
         if (yaw > -5 && yaw < 5) yaw = 0;
-
+        
         int thr = 1000 + (thr_raw - 240) * 1.2;
         if (thr < 1000) thr = 1000;
         if (thr > 2000) thr = 2000;
+
+        
+        
+                // === LOW-PASS FILTER ===
+        static int roll_f = 0;
+        static int pitch_f = 0;
+        static int yaw_f = 0;
+
+        // α = 0.1 (сильное сглаживание)
+        roll_f  = roll_f  * 9 / 10 + roll  / 10;
+        pitch_f = pitch_f * 9 / 10 + pitch / 10;
+        yaw_f   = yaw_f   * 9 / 10 + yaw   / 10;
 
         // === МИКСЕР ПОД ТВОЮ СХЕМУ ===
         int m1 = thr + pitch + roll - yaw; // front-left

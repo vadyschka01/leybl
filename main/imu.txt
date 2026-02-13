@@ -1,0 +1,180 @@
+#include "stm32g4xx.h"
+#include <stdio.h>
+
+//НАСТРОЙКИ
+#define IMU_ADDR (0x68 << 1) // Адрес датчика
+#define REG_WHO_AM_I 0x00    // Регистр ID для ICM-20948
+
+// ЗАДЕРЖКА
+void delay_long(int limit) {
+    for(volatile int i=0; i<limit; i++) __NOP();
+}
+
+//1. UART (LPUART1) ===
+void LPUART1_Init(void) {
+    // Включаем тактирование
+    RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
+    RCC->APB1ENR2 |= RCC_APB1ENR2_LPUART1EN;
+      
+    // Выбираем HSI16 как источник
+    RCC->CCIPR &= ~RCC_CCIPR_LPUART1SEL;
+    RCC->CCIPR |= (2 << RCC_CCIPR_LPUART1SEL_Pos);
+
+    // Настройка PA2 (TX) -> AF12
+    GPIOA->MODER &= ~GPIO_MODER_MODE2;
+    GPIOA->MODER |= GPIO_MODER_MODE2_1;
+    GPIOA->AFR[0] &= ~(0xF << 8);
+    GPIOA->AFR[0] |= (12 << 8);
+    
+    // Скорость 9600 (при 16 МГц) -> 0x682AA
+    LPUART1->BRR = 0x682AA;
+    LPUART1->CR1 = USART_CR1_UE | USART_CR1_TE;
+}
+
+void UART_SendString(char* str) {
+    while(*str) {
+        while (!(LPUART1->ISR & USART_ISR_TXE_TXFNF));
+        LPUART1->TDR = *str++;
+    }
+}
+
+// 2. I2C (I2C1 на PB8/PB9)
+void I2C1_Init(void) {
+    RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN;
+    RCC->APB1ENR1 |= RCC_APB1ENR1_I2C1EN;
+
+    // PB8 (SCL), PB9 (SDA) -> AF4, Open Drain
+    GPIOB->MODER &= ~(GPIO_MODER_MODE8 | GPIO_MODER_MODE9);
+    GPIOB->MODER |= (GPIO_MODER_MODE8_1 | GPIO_MODER_MODE9_1);
+    GPIOB->OTYPER |= (GPIO_OTYPER_OT8 | GPIO_OTYPER_OT9);
+    GPIOB->PUPDR |= (GPIO_PUPDR_PUPD8_0 | GPIO_PUPDR_PUPD9_0); // Pull-up
+    GPIOB->AFR[1] &= ~((0xF << 0) | (0xF << 4));
+    GPIOB->AFR[1] |= ((4 << 0) | (4 << 4)); // AF4
+
+    // Тайминги для 100 кГц
+    I2C1->TIMINGR = 0x00303D5B;
+    I2C1->CR1 |= I2C_CR1_PE;
+}
+
+uint8_t I2C_ReadReg(uint8_t devAddr, uint8_t regAddr) {
+    // Запись адреса регистра
+    I2C1->CR2 = (devAddr & I2C_CR2_SADD) | (1 << 16) | I2C_CR2_START;
+    while (!(I2C1->ISR & I2C_ISR_TXIS)) {
+        if (I2C1->ISR & I2C_ISR_NACKF) return 0xFF;
+    }
+    I2C1->TXDR = regAddr;
+    while (!(I2C1->ISR & I2C_ISR_TC));
+    
+    // Чтение данных
+    I2C1->CR2 = (devAddr & I2C_CR2_SADD) | (1 << 16) | I2C_CR2_RD_WRN | I2C_CR2_START | I2C_CR2_AUTOEND;
+    while (!(I2C1->ISR & I2C_ISR_RXNE));
+    return (uint8_t)I2C1->RXDR;
+}
+
+// 3. MOTORS (TIM2 + TIM1)
+// M1=PA0, M2=PA1, M3=PA10, M4=PA11
+// Частота 100 Гц, старт с 900
+void Motors_Init(void) {
+    // Включаем тактирование
+    RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
+    RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN;
+    RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+
+    //PA0, PA1 -> TIM2 (AF1)
+    GPIOA->MODER &= ~(GPIO_MODER_MODE0 | GPIO_MODER_MODE1);
+    GPIOA->MODER |= (GPIO_MODER_MODE0_1 | GPIO_MODER_MODE1_1);
+    GPIOA->AFR[0] &= ~((0xF << 0) | (0xF << 4));
+    GPIOA->AFR[0] |= ((1 << 0) | (1 << 4));
+
+    //PA10 (AF6), PA11 (AF11) -> TIM1
+    GPIOA->MODER &= ~(GPIO_MODER_MODE10 | GPIO_MODER_MODE11);
+    GPIOA->MODER |= (GPIO_MODER_MODE10_1 | GPIO_MODER_MODE11_1);
+    
+    // PA10 - AF6, PA11 - AF11
+    GPIOA->AFR[1] &= ~((0xF << 8) | (0xF << 12));
+    GPIOA->AFR[1] |= ((6 << 8) | (11 << 12));
+
+    //TIM2 (PA0, PA1) на 100 Гц
+    // 16 МГц / 16 = 1 МГц тики
+    // Период = 10000 тиков = 10 мс = 100 Гц
+    TIM2->PSC = 16 - 1; 
+    TIM2->ARR = 10000 - 1;
+    TIM2->CCMR1 = 0x6060; 
+    TIM2->CCER = 0x11;    
+    TIM2->CR1 = TIM_CR1_CEN;
+
+    //TIM1 (PA10, PA11) на 100 Гц
+    TIM1->PSC = 16 - 1;
+    TIM1->ARR = 10000 - 1;
+    TIM1->CCMR2 = 0x6060; 
+    TIM1->CCER = 0x1100;  
+    TIM1->BDTR |= TIM_BDTR_MOE; 
+    TIM1->CR1 = TIM_CR1_CEN;
+}
+
+void Set_Motors(int val) {
+    TIM2->CCR1 = val; // M1
+    TIM2->CCR2 = val; // M2
+    TIM1->CCR3 = val; // M3
+    TIM1->CCR4 = val; // M4
+}
+
+//MAIN
+int main(void) {
+    // Включаем HSI 16 MHz
+    RCC->CR |= RCC_CR_HSION;
+    while(!(RCC->CR & RCC_CR_HSIRDY));
+
+    // Инициализация
+    LPUART1_Init();
+    I2C1_Init();
+    Motors_Init();
+
+    UART_SendString("BOOT: Init Done.\r\n");
+
+    // Арминг моторов
+    // Посылаем 900 (Стоп)
+    // Держим паузу, чтобы ESC пропищали мелодию инициализации
+    Set_Motors(900);
+    UART_SendString("ESC Calibrating (900)...\r\n");
+    delay_long(6000000); // 3-4 секунды ждем
+
+    UART_SendString("STARTING MOTORS!\r\n");
+
+    char buffer[50];
+    uint8_t id = 0;
+    
+    // Диапазон работы теперь 900 ... 2000
+    int throttle = 900;
+    int step = 1;       // Шаг минимальный
+    int print_counter = 0; // Счетчик для отправки в UART
+
+    while (1) {
+        // 1. Логика плавного изменения
+        throttle += step;
+        
+        // Диапазон 900 ... 1300
+        if (throttle >= 1300) step = -1; // Разворачиваемся вниз
+        if (throttle <= 900)  step = 1;  // Разворачиваемся вверх
+
+        // 2. Обновляем моторы (часто)
+        Set_Motors(throttle); 
+
+        // 3. В в UART пишем редко (раз в 50 циклов чтобы не тормозить моторы)
+        print_counter++;
+        if (print_counter >= 50) {
+            // Читаем датчик
+            id = I2C_ReadReg(IMU_ADDR, REG_WHO_AM_I);
+            
+            // Шлем отчет
+            sprintf(buffer, "IMU: 0x%02X | PWM: %d\r\n", id, throttle);
+            UART_SendString(buffer);
+            
+            print_counter = 0; // Сброс счетчика
+        }
+
+        // 4. Маленькая задержка (примерно 10-20 мс)
+        // Моторы меняю плавно свою скорость - 50-100 раз в секунду
+        delay_long(20000); 
+    }
+}
