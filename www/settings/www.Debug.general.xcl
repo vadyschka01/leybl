@@ -1,0 +1,15 @@
+C:\IAR\arm\bin\armproc.dll
+
+ C:\IAR\arm\bin\armstlink.dll
+
+ C:\www\Debug\Exe\www.out
+
+ --plugin=C:\IAR\arm\bin\armLibSupportUniversal.dll
+
+ --device_macro=C:\IAR\arm/config/debugger/ST/STM32G4xx.dmac
+
+ --flash_loader=C:\IAR\arm/config/flashloader/ST/FlashSTM32G43xxB.board
+
+ 
+
+

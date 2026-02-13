@@ -1,0 +1,63 @@
+##IAR Ninja build file
+
+
+#Rules
+rule COMPDB_GEN
+  command = C$:\IAR\common\bin\ClangdCompDbGenerator.exe $gencommand -f "$rspfile_name"
+  description = Building $out...
+  rspfile = $rspfile_name
+  rspfile_content = $flags
+
+rule COMPDB_LINK
+  command = C$:\IAR\common\bin\ClangdCompDbLinker.exe -f "$rspfile_name"
+  description = Building $out...
+  rspfile = $rspfile_name
+  rspfile_content = $flags
+
+
+
+#Build steps
+build C$:\www\Debug\BrowseInfo\imu.c.json : COMPDB_GEN 
+    flags = C$:\IAR\arm\bin\iccarm.exe C$:\www\imu.c -D STM32G431xx -o C$:\www\Debug\Obj\ --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling --debug --endian=little --cpu=Cortex-M4 --fpu=VFPv4_sp --libc++ -I C$:\www\ -On -I C$:\IAR\arm\CMSIS\Core\Include\ -e
+    gencommand = -output_file C$:\www\Debug\BrowseInfo\imu.c.json -icc_path C$:\IAR\arm\bin\iccarm.exe -source_file C$:\www\imu.c -work_dir C$:\www -keyword_map_path C$:\IAR\common\config\ClangdConfig.json -object_file C$:\www\Debug\Obj\imu.o
+    rspfile_name = C$:\www\Debug\BrowseInfo\imu.c.json.rsp
+
+build C$:\www\Debug\BrowseInfo\main.c.json : COMPDB_GEN 
+    flags = C$:\IAR\arm\bin\iccarm.exe C$:\www\main.c -D STM32G431xx -o C$:\www\Debug\Obj\ --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling --debug --endian=little --cpu=Cortex-M4 --fpu=VFPv4_sp --libc++ -I C$:\www\ -On -I C$:\IAR\arm\CMSIS\Core\Include\ -e
+    gencommand = -output_file C$:\www\Debug\BrowseInfo\main.c.json -icc_path C$:\IAR\arm\bin\iccarm.exe -source_file C$:\www\main.c -work_dir C$:\www -keyword_map_path C$:\IAR\common\config\ClangdConfig.json -object_file C$:\www\Debug\Obj\main.o
+    rspfile_name = C$:\www\Debug\BrowseInfo\main.c.json.rsp
+
+build C$:\www\Debug\BrowseInfo\mixer.c.json : COMPDB_GEN 
+    flags = C$:\IAR\arm\bin\iccarm.exe C$:\www\mixer.c -D STM32G431xx -o C$:\www\Debug\Obj\ --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling --debug --endian=little --cpu=Cortex-M4 --fpu=VFPv4_sp --libc++ -I C$:\www\ -On -I C$:\IAR\arm\CMSIS\Core\Include\ -e
+    gencommand = -output_file C$:\www\Debug\BrowseInfo\mixer.c.json -icc_path C$:\IAR\arm\bin\iccarm.exe -source_file C$:\www\mixer.c -work_dir C$:\www -keyword_map_path C$:\IAR\common\config\ClangdConfig.json -object_file C$:\www\Debug\Obj\mixer.o
+    rspfile_name = C$:\www\Debug\BrowseInfo\mixer.c.json.rsp
+
+build C$:\www\Debug\BrowseInfo\motors.c.json : COMPDB_GEN 
+    flags = C$:\IAR\arm\bin\iccarm.exe C$:\www\motors.c -D STM32G431xx -o C$:\www\Debug\Obj\ --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling --debug --endian=little --cpu=Cortex-M4 --fpu=VFPv4_sp --libc++ -I C$:\www\ -On -I C$:\IAR\arm\CMSIS\Core\Include\ -e
+    gencommand = -output_file C$:\www\Debug\BrowseInfo\motors.c.json -icc_path C$:\IAR\arm\bin\iccarm.exe -source_file C$:\www\motors.c -work_dir C$:\www -keyword_map_path C$:\IAR\common\config\ClangdConfig.json -object_file C$:\www\Debug\Obj\motors.o
+    rspfile_name = C$:\www\Debug\BrowseInfo\motors.c.json.rsp
+
+build C$:\www\Debug\BrowseInfo\pid.c.json : COMPDB_GEN 
+    flags = C$:\IAR\arm\bin\iccarm.exe C$:\www\pid.c -D STM32G431xx -o C$:\www\Debug\Obj\ --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling --debug --endian=little --cpu=Cortex-M4 --fpu=VFPv4_sp --libc++ -I C$:\www\ -On -I C$:\IAR\arm\CMSIS\Core\Include\ -e
+    gencommand = -output_file C$:\www\Debug\BrowseInfo\pid.c.json -icc_path C$:\IAR\arm\bin\iccarm.exe -source_file C$:\www\pid.c -work_dir C$:\www -keyword_map_path C$:\IAR\common\config\ClangdConfig.json -object_file C$:\www\Debug\Obj\pid.o
+    rspfile_name = C$:\www\Debug\BrowseInfo\pid.c.json.rsp
+
+build C$:\www\Debug\BrowseInfo\sbus.c.json : COMPDB_GEN 
+    flags = C$:\IAR\arm\bin\iccarm.exe C$:\www\sbus.c -D STM32G431xx -o C$:\www\Debug\Obj\ --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling --debug --endian=little --cpu=Cortex-M4 --fpu=VFPv4_sp --libc++ -I C$:\www\ -On -I C$:\IAR\arm\CMSIS\Core\Include\ -e
+    gencommand = -output_file C$:\www\Debug\BrowseInfo\sbus.c.json -icc_path C$:\IAR\arm\bin\iccarm.exe -source_file C$:\www\sbus.c -work_dir C$:\www -keyword_map_path C$:\IAR\common\config\ClangdConfig.json -object_file C$:\www\Debug\Obj\sbus.o
+    rspfile_name = C$:\www\Debug\BrowseInfo\sbus.c.json.rsp
+
+build C$:\www\Debug\BrowseInfo\system_stm32g4xx.c.json : COMPDB_GEN 
+    flags = C$:\IAR\arm\bin\iccarm.exe C$:\www\system_stm32g4xx.c -D STM32G431xx -o C$:\www\Debug\Obj\ --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling --debug --endian=little --cpu=Cortex-M4 --fpu=VFPv4_sp --libc++ -I C$:\www\ -Ol -I C$:\IAR\arm\CMSIS\Core\Include\ -e
+    gencommand = -output_file C$:\www\Debug\BrowseInfo\system_stm32g4xx.c.json -icc_path C$:\IAR\arm\bin\iccarm.exe -source_file C$:\www\system_stm32g4xx.c -work_dir C$:\www -keyword_map_path C$:\IAR\common\config\ClangdConfig.json -object_file C$:\www\Debug\Obj\system_stm32g4xx.o
+    rspfile_name = C$:\www\Debug\BrowseInfo\system_stm32g4xx.c.json.rsp
+
+build C$:\www\Debug\compile_commands.json : COMPDB_LINK C$:\www\Debug\BrowseInfo\imu.c.json | C$:\www\Debug\BrowseInfo\main.c.json $
+ C$:\www\Debug\BrowseInfo\mixer.c.json $
+ C$:\www\Debug\BrowseInfo\motors.c.json $
+ C$:\www\Debug\BrowseInfo\pid.c.json $
+ C$:\www\Debug\BrowseInfo\sbus.c.json $
+ C$:\www\Debug\BrowseInfo\system_stm32g4xx.c.json
+    flags = -o C$:\www\Debug\compile_commands.json C$:\www\Debug\BrowseInfo\imu.c.json C$:\www\Debug\BrowseInfo\main.c.json C$:\www\Debug\BrowseInfo\mixer.c.json C$:\www\Debug\BrowseInfo\motors.c.json C$:\www\Debug\BrowseInfo\pid.c.json C$:\www\Debug\BrowseInfo\sbus.c.json C$:\www\Debug\BrowseInfo\system_stm32g4xx.c.json
+    rspfile_name = C$:\www\Debug\compile_commands.json.rsp
+
