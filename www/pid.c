@@ -1,79 +1,42 @@
 #include "pid.h"
-#include "imu.h"
-#include "sbus.h"
+#include "imu.h"   // тут объявлен gyro_z
+#include "sbus.h"  // тут rc_channels
 
-float anti_torque = 0; // --- anty torque
+float pid_roll_output  = 0.0f;
+float pid_pitch_output = 0.0f;
+float pid_yaw_output   = 0.0f;
 
-// PID структуры
-PID_t pid_roll;
-PID_t pid_pitch;
-PID_t pid_yaw;
+// Коэффициенты только для yaw
+static float pid_yaw_kp = 0.09f;   // очень мягко было 0.03 рабочий
+static float pid_yaw_ki = 0.0f;
+static float pid_yaw_kd = 0.0f;
 
-// Выходы PID
-float pid_roll_output = 0;
-float pid_pitch_output = 0;
-float pid_yaw_output = 0;
 
-// Настройки PID (можешь менять)
-#define DT 0.002f   // 2 мс (500 Гц)
-#define PID_LIMIT 400.0f
-
+// Для простоты — без интеграла и D, только P
 void PID_Init(void) {
-    pid_roll.kp  = 0.01f;
-    pid_roll.ki  = 0.0f;
-    pid_roll.kd  = 1.2f;
-
-    pid_pitch.kp = 0.01f;
-    pid_pitch.ki = 0.0f;
-    pid_pitch.kd = 1.2f;
-
-    pid_yaw.kp   = 0.01f;
-    pid_yaw.ki   = 0.0f;
-    pid_yaw.kd   = 1.2f;
+    pid_roll_output  = 0.0f;
+    pid_pitch_output = 0.0f;
+    pid_yaw_output   = 0.0f;
 }
 
-
-static float PID_Compute(PID_t *pid, float error) {
-
-    pid->integral += error * DT;
-    float derivative = (error - pid->last_error) / DT;
-    pid->last_error = error;
-
-    float out = pid->kp * error +
-                pid->ki * pid->integral +
-                pid->kd * derivative;
-
-    // Ограничение
-    if (out > PID_LIMIT) out = PID_LIMIT;
-    if (out < -PID_LIMIT) out = -PID_LIMIT;
-
-    return out;
-}
 
 void PID_Update(void) {
-    
-    // === 1. Читаем стики ===
-    float roll_set  = (rc_channels[0] - 1024) * 0.2f;
-    float pitch_set = (rc_channels[1] - 1024) * 0.2f;
-    float yaw_set   = (rc_channels[3] - 1024) * 0.2f;
 
-    // === 2. Читаем гироскоп ===
-    float roll_rate  = gyro_x;   // deg/s
-    float pitch_rate = gyro_y;
-    float yaw_rate   = gyro_z;
+    float yaw_set = -(rc_channels[3] - 1024) * 0.5f;
 
-    // === 3. Ошибки ===
-    float roll_error  = roll_set  - roll_rate;
-    float pitch_error = pitch_set - pitch_rate;
-    float yaw_error   = yaw_set   - yaw_rate;
+    // 1) Сильно уменьшаем влияние гиры
+    float gyro_scale = 0.017f;           // начинаем с ОЧЕНЬ маленького
+    float raw_rate   = gyro_z * gyro_scale;
 
-    // === 4. PID ===
-    pid_roll_output  = PID_Compute(&pid_roll,  roll_error);
-    pid_pitch_output = PID_Compute(&pid_pitch, pitch_error);
-    pid_yaw_output   = PID_Compute(&pid_yaw,   yaw_error);
-    
-        // === Anti-torque compensation ===
-    // Компенсация реактивного момента при газе
-    float anti_torque = gyro_z * 0.02f;
+    // 2) Фильтр по yaw_rate
+    static float yaw_rate_f = 0;
+    yaw_rate_f = yaw_rate_f * 0.7f + raw_rate * 0.3f;
+    float yaw_rate = yaw_rate_f;
 
+    float yaw_error = yaw_set - yaw_rate;
+
+    float kp = 1.0f;
+    pid_yaw_output = kp * yaw_error;
 }
+
+
