@@ -4,10 +4,10 @@
 void Mixer_Update(void) {
 
     // === 1. Читаем каналы ===
-    int thr   = rc_channels[2];   // throttle
-    int roll  = rc_channels[0];   // roll
-    int pitch = rc_channels[1];   // pitch
-    int yaw   = rc_channels[3];   // yaw
+    float thr   = rc_channels[2];   // throttle
+    float roll  = rc_channels[0];   // roll
+    float pitch = rc_channels[1];   // pitch
+    float yaw   = rc_channels[3];   // yaw
 
     // === 2. Приводим к диапазону -500..+500 ===
     roll  = pid_roll_output;  // pid ссылка
@@ -17,9 +17,10 @@ void Mixer_Update(void) {
 
 
     // === 3. Масштабируем ===
-    roll  *= 0.5;
-    pitch *= 0.5;
-    yaw   *= 0.5;
+    roll  = pid_roll_output * 3.0f;
+    pitch = pid_pitch_output * 3.0f;
+    yaw = (rc_channels[3] - 1024) * 0.5f;
+
 
     // === 4. Газ в диапазон 1050–2000 ===
     thr = 1050 + (thr - 240) * 1.2;

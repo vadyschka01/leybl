@@ -19,15 +19,15 @@ float pid_yaw_output = 0;
 #define PID_LIMIT 400.0f
 
 void PID_Init(void) {
-    pid_roll.kp  = 0.0f;
+    pid_roll.kp  = 0.01f;
     pid_roll.ki  = 0.0f;
     pid_roll.kd  = 1.2f;
 
-    pid_pitch.kp = 0.0f;
+    pid_pitch.kp = 0.01f;
     pid_pitch.ki = 0.0f;
     pid_pitch.kd = 1.2f;
 
-    pid_yaw.kp   = 0.0f;
+    pid_yaw.kp   = 0.01f;
     pid_yaw.ki   = 0.0f;
     pid_yaw.kd   = 1.2f;
 }
