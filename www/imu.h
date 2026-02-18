@@ -10,6 +10,9 @@ extern float accel_x;
 extern float accel_y;
 extern float accel_z;
 
+extern float pitch_angle;  // --- angle 
+extern float roll_angle;
+
 
 
 #define IMU_ADDR      (0x68 << 1)

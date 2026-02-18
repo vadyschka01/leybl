@@ -1,7 +1,10 @@
 #include "stm32g4xx.h"
 #include "motors.h"
+#include "pid.h"
+#include "mixer.h"
 
 void Motors_Init(void) {
+
     RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
     RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN;
     RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;

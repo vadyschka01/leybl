@@ -6,17 +6,9 @@ void Mixer_Update(void) {
 
     float thr = rc_channels[2];
 
-    // === yaw: комбинируем прямой стик + PID ===
-    float yaw_stick = -(rc_channels[3] - 1024) * 0.5f;   // как у тебя работало
-    float yaw_pid   = pid_yaw_output * 0.5f;             // мягкая добавка
-
-    float yaw = pid_yaw_output; // без *0.5f
-
-
-
-    // roll/pitch пока 0
-    float roll  = 0.0f;
-    float pitch = 0.0f;
+    float yaw = pid_yaw_output;
+    float roll = pid_roll_output;
+    float pitch = pid_pitch_output;
 
     // === масштаб газа ===
     thr = 1050.0f + (thr - 240.0f) * 1.2f;
