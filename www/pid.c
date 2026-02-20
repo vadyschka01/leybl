@@ -6,6 +6,8 @@ float pid_roll_output  = 0.0f;
 float pid_pitch_output = 0.0f;
 float pid_yaw_output   = 0.0f;
 
+float pitch_angle_offset = 0.0f;   // софт-трим
+float roll_angle_offset  = 0.0f;
 
 static float last_roll_error = 0.0f;  // для производной
 
@@ -14,15 +16,15 @@ static float pid_yaw_kp = 0.0f;   // 0.5 рабочий
 static float pid_yaw_ki = 0.0f;
 static float pid_yaw_kd = 0.0f;
 
-// Коэффициенты только для pitch (ось Y)
-static float pid_pitch_kp = 0.0f;   // 0.35
-static float pid_pitch_ki = 0.0f;
-static float pid_pitch_kd = 0.0f;
-
 // Коэффициенты только для roll (ось X)
-static float pid_roll_kp = 0.0f;   //  
+static float pid_roll_kp = 0.0f;   //0.3
 static float pid_roll_ki = 0.0f;
-static float pid_roll_kd = 0.0f;
+static float pid_roll_kd = 0.0f;   //0.5
+
+// Коэффициенты только для pitch (ось Y)
+static float pid_pitch_kp = 0.0f;   //  0.5
+static float pid_pitch_ki = 0.0f;
+static float pid_pitch_kd = 0.0f;   // 1.0
 
 
 
@@ -55,15 +57,19 @@ void PID_Update(void) {
     // === ВНЕШНИЙ ANGLE PID для pitch/roll ===
 
     // желаемый угол от стиков (макс ~ ±25°)
-    float pitch_angle_set = -(rc_channels[1] - 1024) * 0.05f;
-    float roll_angle_set  =  (rc_channels[0] - 1024) * 0.05f;
+    float pitch_angle_set = -(rc_channels[0] - 1024) * 0.05f;
+    float roll_angle_set  =  -(rc_channels[1] - 1024) * 0.05f;
 
     // ошибка по углу
-    float pitch_angle_error = pitch_angle_set - pitch_angle;
-    float roll_angle_error  = roll_angle_set  - roll_angle;
+    /*float pitch_angle_error = pitch_angle_set - pitch_angle;
+    float roll_angle_error  = roll_angle_set  - roll_angle; */
+    
+    float pitch_angle_error = pitch_angle_set - (pitch_angle - pitch_angle_offset);
+    float roll_angle_error  = roll_angle_set  - (roll_angle  - roll_angle_offset);
+
 
     // коэффициенты внешнего контура
-    float angle_kp = 1.0f;   // начни с 3–5
+    float angle_kp = 1.0f;   // 3–5???для roll 3.0 
 
     // выход внешнего PID — это желаемая скорость вращения
     float pitch_rate_set = angle_kp * pitch_angle_error;
@@ -75,7 +81,7 @@ void PID_Update(void) {
     float pitch_set = pitch_rate_set;;
 
     // 2) Скорость вращения по оси Y
-    float gyro_scale_pitch = 0.017f;
+    float gyro_scale_pitch = 0.0017f;
     float raw_pitch_rate   = gyro_y * gyro_scale_pitch;
 
     // 3) Фильтр скорости

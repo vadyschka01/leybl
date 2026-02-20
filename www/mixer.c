@@ -6,9 +6,10 @@ void Mixer_Update(void) {
 
     float thr = rc_channels[2];
 
-    float yaw = pid_yaw_output;
-    float roll = pid_roll_output;
+    float roll  = pid_roll_output;
     float pitch = pid_pitch_output;
+    float yaw   = pid_yaw_output;
+    
 
     // === масштаб газа ===
     thr = 1050.0f + (thr - 240.0f) * 1.2f;
@@ -20,10 +21,11 @@ void Mixer_Update(void) {
     // M4 (front-right, CCW)
     // M2 (rear-left, CCW)
     // M3 (rear-right, CW)
-    int m1 = (int)(thr - roll + pitch + yaw);
-    int m4 = (int)(thr + roll + pitch - yaw);
-    int m2 = (int)(thr - roll - pitch - yaw);
-    int m3 = (int)(thr + roll - pitch + yaw);
+    int m1 = (int)(thr - pitch + roll + yaw);
+    int m4 = (int)(thr + pitch + roll - yaw);
+    int m2 = (int)(thr - pitch - roll - yaw);
+    int m3 = (int)(thr + pitch - roll + yaw);
+
 
     if (m1 < 1050) m1 = 1050; if (m1 > 2000) m1 = 2000;
     if (m2 < 1050) m2 = 1050; if (m2 > 2000) m2 = 2000;

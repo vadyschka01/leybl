@@ -184,14 +184,23 @@ void IMU_ReadAccelGyro(void) {
     
     
     // нормализация акселя
+    // нормализация акселя
     ax /= 16384.0f;
     ay /= 16384.0f;
     az /= 16384.0f;
 
-    // правильные углы из акселя
-    float roll_acc  = atan2f(ay, az) * 57.2958f;
-    float pitch_acc = atan2f(-ax, sqrtf(ay*ay + az*az)) * 57.2958f;
+    // === правильные углы под твою ориентацию IMU ===
+    // roll: наклон вправо/влево (ось X)
+    // pitch: наклон носом вверх/вниз (ось Y)
 
+    float roll_acc  = atan2f(-ax, az) * 57.2958f;
+    float pitch_acc = atan2f( ay, az) * 57.2958f;
+
+    // ВРЕМЕННО: только аксель, без гиры и фильтра
+    roll_angle  = roll_acc;
+    pitch_angle = pitch_acc;
+
+    /*
     // перевод гиры в градусы/секунду
     float gx = gyro_x * (2000.0f / 32768.0f);   // roll rate
     float gy = gyro_y * (2000.0f / 32768.0f);   // pitch rate
@@ -207,7 +216,7 @@ void IMU_ReadAccelGyro(void) {
     float alpha = 0.997f;
 
     roll_angle  = roll_angle  * alpha + roll_acc  * (1.0f - alpha);
-    pitch_angle = pitch_angle * alpha + pitch_acc * (1.0f - alpha);
+    pitch_angle = pitch_angle * alpha + pitch_acc * (1.0f - alpha); */
 
 
 
