@@ -1,54 +1,66 @@
-#include "stm32f4xx.h"
-#include <stdio.h>
+#include "stm32g4xx.h"
+#include "imu.h"
+#include "sbus.h"
+#include "motors.h"
 
-// Функция простой задержки
-void delay(int count) {
-    while(count--) {
-        __NOP();
-    }
+volatile uint32_t ms = 0;
+uint8_t armed = 0;
+
+void SysTick_Handler(void) {
+    ms++;
 }
 
-int main() {
-    // --- 1. Инициализация GPIO (Светодиод) ---
-    // Включаем тактирование порта I
-    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN;
-    // Настраиваем ножку PI11 на выход (General Purpose Output)
-    GPIOI->MODER &= ~(3UL << (11 * 2)); // Сброс бит
-    GPIOI->MODER |= (1UL << (11 * 2));  // Установка режима
+int main(void) {
+    RCC->CR |= RCC_CR_HSION;
+    while (!(RCC->CR & RCC_CR_HSIRDY));
 
-    // --- 2. Инициализация ADC (Потенциометр) ---
-    // Включаем тактирование порта C (для POT1 на PC3)
-    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
-    // Настраиваем PC3 как аналоговый вход
-    GPIOC->MODER |= (3UL << (3 * 2));
+    SysTick_Config(SystemCoreClock / 1000U);
+
+    // === 1. СНАЧАЛА МОТОРЫ ===
+    Motors_Init();
+    Set_Motors(900); // минимальный сигнал ESC
+    for (volatile int i = 0; i < 6000000; i++) __NOP(); // 3 секунды
+
+    // === 2. ПОТОМ IMU ===
+    I2C1_Init();
+    IMU_Init();
     
-    // Включаем тактирование модуля АЦП1
-    RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
-    // Включаем сам АЦП
-    ADC1->CR2 |= ADC_CR2_ADON;
-    // Выбираем 13-й канал (PC3) для регулярной группы преобразований
-    ADC1->SQR3 = 13;
+    // === 3. ПОТОМ SBUS ===
+    LPUART1_SBUS_Init();
+    
+    PID_Init();    // pid иниц
 
-    // --- 3. Основной цикл ---
+    uint32_t last_imu = 0;
+
     while (1) {
-        // Запуск преобразования АЦП
-        ADC1->CR2 |= ADC_CR2_SWSTART;
-        
-        // Ожидание окончания преобразования (флаг EOC)
-        while(!(ADC1->SR & ADC_SR_EOC));
 
-        // Чтение результата из регистра данных
-        int adc_value = ADC1->DR;
+        // === Чтение IMU ===
+        if (ms - last_imu >= 20) {
+            IMU_ReadAccelGyro();
+            last_imu = ms;
+        }
 
-        // Вывод данных в терминал отладчика
-        printf("Potentiometer: %d\n", adc_value);
-        
-        // Индикация работы (переключение светодиода)
-        GPIOI->ODR ^= (1UL << 11);
+        // === ARM / DISARM через SWA ===
+        int swa = rc_channels[4]; // канал тумблера
 
-        // Задержка для читаемости данных
-        delay(500000); 
+        if (!armed) {
+            if (swa > 1500 && rc_channels[2] < 1050) {
+                armed = 1;
+            }
+        } else {
+            if (swa < 1500) {
+                armed = 0;
+                Set_Motors(900);
+            }
+        }
+
+        if (armed) {
+            PID_Update();
+            Mixer_Update();
+        } else {
+            Motors_Stop();
+        }
+
+
     }
-    
-    return 0;
 }
