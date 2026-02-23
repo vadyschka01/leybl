@@ -13,6 +13,7 @@ volatile int16_t  imu_gz = 0;
 volatile int16_t  imu_temp_raw = 0;
 volatile float    imu_temp_c = 0.0f;
 
+
 // ---------------- FILTERED / PROCESSED DATA ----------------
 float accel_x = 0;
 float accel_y = 0;
@@ -27,9 +28,10 @@ float gyro_pitch_rate = 0.0f;
 float gyro_yaw_rate   = 0.0f;
 
 // ---------------- GYRO BIAS ----------------
-float gyro_bias_x = 0.0f;
-float gyro_bias_y = 0.0f;
-float gyro_bias_z = 0.0f;
+float gyro_bias_x = -43.0f;
+float gyro_bias_y = 201.0f;
+float gyro_bias_z = 20.0f;
+
 
 // ---------------- ANGLES ----------------
 float roll_angle = 0;
@@ -46,6 +48,11 @@ typedef struct {
 static biquad_t accel_x_lpf;
 static biquad_t accel_y_lpf;
 static biquad_t accel_z_lpf;
+
+static biquad_t gyro_x_lpf;
+static biquad_t gyro_y_lpf;
+static biquad_t gyro_z_lpf;
+
 
 static void biquad_init(biquad_t *f, float cutoff, float sample_rate) {
     float omega = 2.0f * 3.1415926f * cutoff / sample_rate;
@@ -154,11 +161,17 @@ void IMU_Init(void) {
     biquad_init(&accel_x_lpf, 30.0f, 1000.0f);
     biquad_init(&accel_y_lpf, 30.0f, 1000.0f);
     biquad_init(&accel_z_lpf, 30.0f, 1000.0f);
+      
+    biquad_init(&gyro_x_lpf, 120.0f, 1000.0f);
+    biquad_init(&gyro_y_lpf, 120.0f, 1000.0f);
+    biquad_init(&gyro_z_lpf, 120.0f, 1000.0f);
+
 }
 
 // ---------------- GYRO CALIBRATION ----------------
-void IMU_CalibrateGyro(void) {
-    const int N = 1000;
+void IMU_CalibrateGyro(void)
+{
+    const int N = 2000;
     int32_t sum_x = 0, sum_y = 0, sum_z = 0;
 
     for (int i = 0; i < N; i++) {
@@ -173,12 +186,15 @@ void IMU_CalibrateGyro(void) {
         sum_x += gx;
         sum_y += gy;
         sum_z += gz;
+
+        for (volatile int d = 0; d < 3000; d++) __NOP(); // 2–3 ms задержка
     }
 
     gyro_bias_x = (float)sum_x / N;
     gyro_bias_y = (float)sum_y / N;
     gyro_bias_z = (float)sum_z / N;
 }
+
 
 // ---------------- MAIN IMU READ ----------------
 void IMU_ReadAccelGyro(void) {
@@ -205,21 +221,28 @@ void IMU_ReadAccelGyro(void) {
     float ay = accel_y / 16384.0f;
     float az = accel_z / 16384.0f;
 
-    float roll_acc  = atan2f(ax, az) * 57.2958f;
-    float pitch_acc = atan2f(-ay, sqrtf(ax*ax + az*az)) * 57.2958f;
+    float pitch_acc  = atan2f(ax, az) * 57.2958f;
+    float roll_acc = atan2f(-ay, sqrtf(ax*ax + az*az)) * 57.2958f;
     pitch_acc += pitch_trim_deg;
+
 
     // -------- APPLY BIAS --------
     float gx_raw = (float)imu_gx - gyro_bias_x;
     float gy_raw = (float)imu_gy - gyro_bias_y;
-    float gz_raw = (float)imu_gz - gyro_bias_z;
+    float gz_raw = (float)imu_gz - gyro_bias_z;  
+      
+    gx_raw = biquad_apply(&gyro_x_lpf, gx_raw);
+    gy_raw = biquad_apply(&gyro_y_lpf, gy_raw);
+    gz_raw = biquad_apply(&gyro_z_lpf, gz_raw);
+    
 
     // -------- CONVERT TO DEG/SEC --------
     const float scale = (2000.0f / 32768.0f);
 
-    gyro_roll_rate  = gx_raw * scale;
-    gyro_pitch_rate = gy_raw * scale;
-    gyro_yaw_rate   = gz_raw * scale;
+    gyro_roll_rate = gy_raw * scale; 
+    gyro_pitch_rate = gx_raw * scale; 
+    gyro_yaw_rate = gz_raw * scale;
+      
 
     // -------- INTEGRATE --------
     float dt = 0.001f;

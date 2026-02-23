@@ -15,14 +15,14 @@ void Mixer_Update(void) {
     if (thr < 1050) thr = 1050;
     if (thr > 2000) thr = 2000;
 
-    // === миксер под твою схему:
+    // === миксер под схему:
     // M1 (front-left, CW)
     // M4 (front-right, CCW)
     // M2 (rear-left, CCW)
     // M3 (rear-right, CW)
-    int m1 = (int)(thr + pitch - roll + yaw);
-    int m4 = (int)(thr + pitch + roll - yaw);
-    int m2 = (int)(thr - pitch - roll - yaw);
+    int m1 = (int)(thr + pitch - roll - yaw);
+    int m4 = (int)(thr + pitch + roll + yaw);
+    int m2 = (int)(thr - pitch + roll - yaw);
     int m3 = (int)(thr - pitch - roll + yaw);
 
 

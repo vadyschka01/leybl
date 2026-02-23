@@ -14,9 +14,9 @@ static float pid_yaw_ki = 0.0f;
 static float pid_yaw_kd = 0.0f;
 
 // Коэффициенты только для roll (ось X)
-static float pid_roll_kp = 0.3f;   //0.3
+static float pid_roll_kp = 0.05f;   //0.3
 static float pid_roll_ki = 0.0f;
-static float pid_roll_kd = 0.5f;   //0.5
+static float pid_roll_kd = 0.35f;   //0.5
 
 // Коэффициенты только для pitch (ось Y)
 static float pid_pitch_kp = 0.0f;   //  0.5
@@ -39,8 +39,8 @@ void PID_Update(void)
     float yaw_rate   = gyro_yaw_rate;
 
     // === 2. Стики → желаемые углы ===
+    float roll_angle_set = -(rc_channels[0] - 1024) * 0.05f;
     float pitch_angle_set = -(rc_channels[1] - 1024) * 0.05f;
-    float roll_angle_set  = -(rc_channels[0] - 1024) * 0.05f;
     float yaw_rate_set    = -(rc_channels[3] - 1024) * 0.5f;
 
     // === 3. Ошибка по углам ===
@@ -48,7 +48,7 @@ void PID_Update(void)
     float roll_angle_error  = roll_angle_set  - roll_angle;
 
     // === 4. Внешний контур (ANGLE → RATE) ===
-    float angle_kp = 1.0f;
+    float angle_kp = 3.0f;
 
     float pitch_rate_set = angle_kp * pitch_angle_error;
     float roll_rate_set  = angle_kp * roll_angle_error;
@@ -69,4 +69,6 @@ void PID_Update(void)
     // --- Yaw ---
     float yaw_error = yaw_rate_set - yaw_rate;
     pid_yaw_output = pid_yaw_kp * yaw_error;
-}
+} 
+
+
