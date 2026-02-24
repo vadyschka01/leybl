@@ -26,6 +26,12 @@ int main(void) {
     IMU_Init();
     IMU_CalibrateGyro();
     
+    
+    roll_angle  = 0.0f;   // ---- обнуление углов 
+    pitch_angle = 0.0f;
+
+
+    
     // === 3. ПОТОМ SBUS ===
     LPUART1_SBUS_Init();
     
@@ -37,7 +43,7 @@ int main(void) {
 
         // === Чтение IMU ===
         if (ms - last_imu >= 20) {
-            IMU_ReadAccelGyro();
+            IMU_ReadAccel();
             last_imu = ms;
         }
 

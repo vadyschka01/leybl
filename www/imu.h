@@ -2,13 +2,13 @@
 #define IMU_H
 
 #include <stdint.h>
-extern float gyro_roll_rate;  
-extern float gyro_pitch_rate;
-extern float gyro_yaw_rate;
 
 extern float accel_x;   // --- сырые данные 
 extern float accel_y;
 extern float accel_z;   // ---
+
+extern float roll_acc;
+extern float pitch_acc;
 
 extern float gyro_x;
 extern float gyro_y;
@@ -23,6 +23,9 @@ extern float gyro_roll_rate;
 extern float gyro_pitch_rate;
 extern float gyro_yaw_rate;
 
+extern float gyro_bias_x;
+extern float gyro_bias_y;
+extern float gyro_bias_z;
 
 #define IMU_ADDR      (0x68 << 1)
 #define REG_WHO_AM_I  0x00
