@@ -24,6 +24,7 @@ int main(void) {
     // === 2. ПОТОМ IMU ===
     I2C1_Init();
     IMU_Init();
+    IMU_CalibrateGyro();
     
     // === 3. ПОТОМ SBUS ===
     LPUART1_SBUS_Init();

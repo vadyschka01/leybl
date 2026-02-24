@@ -2,7 +2,7 @@
 #include "imu.h"
 #include <math.h>
 
-
+// ---------------- RAW IMU DATA ----------------
 volatile uint8_t  imu_whoami = 0;
 volatile int16_t  imu_ax = 0;
 volatile int16_t  imu_ay = 0;
@@ -14,26 +14,51 @@ volatile int16_t  imu_temp_raw = 0;
 volatile float    imu_temp_c = 0.0f;
 
 
+// ---------------- FILTERED / PROCESSED DATA ----------------
+float accel_x = 0;
+float accel_y = 0;
+float accel_z = 0;
 
-float gyro_x = 0;  // --- для pidov
+float gyro_x = 0;
 float gyro_y = 0;
 float gyro_z = 0;
 
-float accel_x = 0;
-float accel_y = 0;
-float accel_z = 0;  // ---
+float gyro_roll_rate  = 0.0f;
+float gyro_pitch_rate = 0.0f;
+float gyro_yaw_rate   = 0.0f;
+
+// ---------------- GYRO BIAS ----------------
+float gyro_bias_x = -43.0f;
+float gyro_bias_y = 201.0f;
+float gyro_bias_z = 20.0f;
 
 
-typedef struct {                                                                //----
+// ---------------- ANGLES ----------------
+float roll_angle = 0;
+float pitch_angle = 0;
+
+float pitch_trim_deg = 0.0f;
+
+// ---------------- BIQUAD FILTER ----------------
+typedef struct {
     float b0, b1, b2, a1, a2;
     float d1, d2;
 } biquad_t;
 
-static void biquad_init(biquad_t *f, float cutoff, float sample_rate) {         
+static biquad_t accel_x_lpf;
+static biquad_t accel_y_lpf;
+static biquad_t accel_z_lpf;
+
+static biquad_t gyro_x_lpf;
+static biquad_t gyro_y_lpf;
+static biquad_t gyro_z_lpf;
+
+
+static void biquad_init(biquad_t *f, float cutoff, float sample_rate) {
     float omega = 2.0f * 3.1415926f * cutoff / sample_rate;
     float sn = sinf(omega);
     float cs = cosf(omega);
-    float alpha = sn / (2.0f * 0.707f); // Q = 0.707 (Butterworth)
+    float alpha = sn / (2.0f * 0.707f);
 
     float b0 = (1 - cs) * 0.5f;
     float b1 = 1 - cs;
@@ -50,11 +75,7 @@ static void biquad_init(biquad_t *f, float cutoff, float sample_rate) {
 
     f->d1 = 0;
     f->d2 = 0;
-}                                                                               // ----
-
-static biquad_t accel_x_lpf; // для biquad фильтрации
-static biquad_t accel_y_lpf; 
-static biquad_t accel_z_lpf;
+}
 
 static float biquad_apply(biquad_t *f, float x) {
     float result = f->b0 * x + f->d1;
@@ -63,13 +84,7 @@ static float biquad_apply(biquad_t *f, float x) {
     return result;
 }
 
-
-float pitch_angle = 0;  // angle
-float roll_angle = 0;
-
-
-
-
+// ---------------- I2C + IMU INIT ----------------
 static void delay_long(int limit) {
     for (volatile int i = 0; i < limit; i++) __NOP();
 }
@@ -142,13 +157,46 @@ void IMU_Init(void) {
     delay_long(100000);
     IMU_WriteReg(0x06, 0x01);
     delay_long(100000);
-    
-    biquad_init(&accel_x_lpf, 30.0f, 1000.0f); // cutoff 30 Hz, sample rate 1000 Hz
+
+    biquad_init(&accel_x_lpf, 30.0f, 1000.0f);
     biquad_init(&accel_y_lpf, 30.0f, 1000.0f);
     biquad_init(&accel_z_lpf, 30.0f, 1000.0f);
+      
+    biquad_init(&gyro_x_lpf, 120.0f, 1000.0f);
+    biquad_init(&gyro_y_lpf, 120.0f, 1000.0f);
+    biquad_init(&gyro_z_lpf, 120.0f, 1000.0f);
 
 }
 
+// ---------------- GYRO CALIBRATION ----------------
+void IMU_CalibrateGyro(void)
+{
+    const int N = 2000;
+    int32_t sum_x = 0, sum_y = 0, sum_z = 0;
+
+    for (int i = 0; i < N; i++) {
+        uint8_t buf[14];
+        IMU_SetBank(0);
+        I2C_ReadMulti(IMU_ADDR, REG_ACCEL_GYRO_START, buf, 14);
+
+        int16_t gx = (int16_t)((buf[6] << 8) | buf[7]);
+        int16_t gy = (int16_t)((buf[8] << 8) | buf[9]);
+        int16_t gz = (int16_t)((buf[10] << 8) | buf[11]);
+
+        sum_x += gx;
+        sum_y += gy;
+        sum_z += gz;
+
+        for (volatile int d = 0; d < 3000; d++) __NOP(); // 2–3 ms задержка
+    }
+
+    gyro_bias_x = (float)sum_x / N;
+    gyro_bias_y = (float)sum_y / N;
+    gyro_bias_z = (float)sum_z / N;
+}
+
+
+// ---------------- MAIN IMU READ ----------------
 void IMU_ReadAccelGyro(void) {
     uint8_t buf[14];
 
@@ -161,63 +209,50 @@ void IMU_ReadAccelGyro(void) {
     imu_gx = (int16_t)((buf[6] << 8) | buf[7]);
     imu_gy = (int16_t)((buf[8] << 8) | buf[9]);
     imu_gz = (int16_t)((buf[10] << 8) | buf[11]);
-    
-    
-    // === Пробрасываем в PID-переменные ===
-    gyro_x = imu_gx;
-    gyro_y = imu_gy;
-    gyro_z = imu_gz;
 
-    accel_x = imu_ax;
-    accel_y = imu_ay;
-    accel_z = imu_az;  // --- для pidov
-    
-    float ax = biquad_apply(&accel_x_lpf, accel_x);
-    float ay = biquad_apply(&accel_y_lpf, accel_y);
-    float az = biquad_apply(&accel_z_lpf, accel_z);
-
-
-
+    accel_x = biquad_apply(&accel_x_lpf, imu_ax);
+    accel_y = biquad_apply(&accel_y_lpf, imu_ay);
+    accel_z = biquad_apply(&accel_z_lpf, imu_az);
 
     imu_temp_raw = (int16_t)((buf[12] << 8) | buf[13]);
     imu_temp_c = 21.0f + ((float)imu_temp_raw) / 333.87f;
+
+    float ax = accel_x / 16384.0f;
+    float ay = accel_y / 16384.0f;
+    float az = accel_z / 16384.0f;
+
+    float pitch_acc  = atan2f(ax, az) * 57.2958f;
+    float roll_acc = atan2f(-ay, sqrtf(ax*ax + az*az)) * 57.2958f;
+    pitch_acc += pitch_trim_deg;
+
+
+    // -------- APPLY BIAS --------
+    float gx_raw = (float)imu_gx - gyro_bias_x;
+    float gy_raw = (float)imu_gy - gyro_bias_y;
+    float gz_raw = (float)imu_gz - gyro_bias_z;  
+      
+    gx_raw = biquad_apply(&gyro_x_lpf, gx_raw);
+    gy_raw = biquad_apply(&gyro_y_lpf, gy_raw);
+    gz_raw = biquad_apply(&gyro_z_lpf, gz_raw);
     
-    
-    // нормализация акселя
-    // нормализация акселя
-    ax /= 16384.0f;
-    ay /= 16384.0f;
-    az /= 16384.0f;
 
-    // === правильные углы под твою ориентацию IMU ===
-    // roll: наклон вправо/влево (ось X)
-    // pitch: наклон носом вверх/вниз (ось Y)
+    // -------- CONVERT TO DEG/SEC --------
+    const float scale = (2000.0f / 32768.0f);
 
-    float roll_acc  = atan2f(-ax, az) * 57.2958f;
-    float pitch_acc = atan2f( ay, az) * 57.2958f;
+    gyro_roll_rate = gy_raw * scale; 
+    gyro_pitch_rate = gx_raw * scale; 
+    gyro_yaw_rate = gz_raw * scale;
+      
 
-    // ВРЕМЕННО: только аксель, без гиры и фильтра
-    roll_angle  = roll_acc;
-    pitch_angle = pitch_acc;
-
-    /*
-    // перевод гиры в градусы/секунду
-    float gx = gyro_x * (2000.0f / 32768.0f);   // roll rate
-    float gy = gyro_y * (2000.0f / 32768.0f);   // pitch rate
-
-    // dt
+    // -------- INTEGRATE --------
     float dt = 0.001f;
 
-    // интеграция гиры
-    roll_angle  += gx * dt;   // <-- было наоборот
-    pitch_angle += gy * dt;   // <-- было наоборот
+    roll_angle  += gyro_roll_rate  * dt;
+    pitch_angle += gyro_pitch_rate * dt;
 
-    // комплементарный фильтр
+    // -------- COMPLEMENTARY FILTER --------
     float alpha = 0.997f;
 
     roll_angle  = roll_angle  * alpha + roll_acc  * (1.0f - alpha);
-    pitch_angle = pitch_angle * alpha + pitch_acc * (1.0f - alpha); */
-
-
-
+    pitch_angle = pitch_angle * alpha + pitch_acc * (1.0f - alpha);
 }

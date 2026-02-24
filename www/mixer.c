@@ -8,23 +8,22 @@ void Mixer_Update(void) {
 
     float roll  = pid_roll_output;
     float pitch = pid_pitch_output;
-    float yaw   = pid_yaw_output;
-    
+    float yaw   = pid_yaw_output; 
 
     // === масштаб газа ===
     thr = 1050.0f + (thr - 240.0f) * 1.2f;
     if (thr < 1050) thr = 1050;
     if (thr > 2000) thr = 2000;
 
-    // === миксер под твою схему:
+    // === миксер под схему:
     // M1 (front-left, CW)
     // M4 (front-right, CCW)
     // M2 (rear-left, CCW)
     // M3 (rear-right, CW)
-    int m1 = (int)(thr - pitch + roll + yaw);
-    int m4 = (int)(thr + pitch + roll - yaw);
-    int m2 = (int)(thr - pitch - roll - yaw);
-    int m3 = (int)(thr + pitch - roll + yaw);
+    int m1 = (int)(thr + pitch - roll - yaw);
+    int m4 = (int)(thr + pitch + roll + yaw);
+    int m2 = (int)(thr - pitch + roll - yaw);
+    int m3 = (int)(thr - pitch - roll + yaw);
 
 
     if (m1 < 1050) m1 = 1050; if (m1 > 2000) m1 = 2000;
