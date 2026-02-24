@@ -12,10 +12,21 @@ float accel_x = 0;
 float accel_y = 0;
 float accel_z = 0;
 
+
+// ----------- ACCEL OFFSETS -----------
+float accel_offset_x = 0.0f;
+float accel_offset_y = 0.0f;
+float accel_offset_z = 0.0f;
+
+
 // ---------------- gyro ----------------
 float gyro_roll_rate  = 0.0f;
 float gyro_pitch_rate = 0.0f;
 float gyro_yaw_rate   = 0.0f;
+
+float pitch_gyro = 0.0f;
+float roll_gyro  = 0.0f;
+
 
 volatile int16_t imu_gx = 0;
 volatile int16_t imu_gy = 0;
@@ -27,6 +38,8 @@ float gyro_bias_x = 0.0f;
 float gyro_bias_y = 0.0f;
 float gyro_bias_z = 0.0f;
 
+//Правильный dt
+uint32_t last_time = 0;
 
 
 // ---------------- ANGLES ----------------
@@ -93,6 +106,33 @@ void IMU_Init(void) {
     delay_long(100000);
 }
 
+void IMU_CalibrateAccel(void) {
+    const int samples = 500;
+    float sum_x = 0;
+    float sum_y = 0;
+    float sum_z = 0;
+
+    for (int i = 0; i < samples; i++) {
+        uint8_t buf[14];
+        IMU_SetBank(0);
+        I2C_ReadMulti(IMU_ADDR, REG_ACCEL_GYRO_START, buf, 14);
+
+        int16_t ax = (int16_t)((buf[0] << 8) | buf[1]);
+        int16_t ay = (int16_t)((buf[2] << 8) | buf[3]);
+        int16_t az = (int16_t)((buf[4] << 8) | buf[5]);
+
+        sum_x += (float)ax / 16384.0f;
+        sum_y += (float)ay / 16384.0f;
+        sum_z += (float)az / 16384.0f;
+
+        for (volatile int d = 0; d < 3000; d++);
+    }
+
+    accel_offset_x = sum_x / samples;
+    accel_offset_y = sum_y / samples;
+    accel_offset_z = (sum_z / samples) - 1.0f; // Z должен быть +1g
+}
+
 
 // ---------------- calibrateGyro----------------
 void IMU_CalibrateGyro(void) {
@@ -127,7 +167,27 @@ void IMU_CalibrateGyro(void) {
 // ---------------- READ ACCEL ONLY ----------------
 void IMU_ReadAccel(void) {
     uint8_t buf[14];
+    
+    static uint32_t last = 0;           // ---dt
+    uint32_t now = DWT->CYCCNT;
 
+    // частота твоего МК — 170 МГц
+    float dt = (now - last) / 170000000.0f;
+
+    last = now;
+
+    // защита от нулевого dt
+    if (dt <= 0.0f || dt > 0.1f) dt = 0.005f;
+
+    
+    
+    //------dF
+    /*uint32_t now = SysTick->VAL; // или TIMx->CNT
+    float dt = (last_time - now) * (1.0f / 170000000.0f); // если SysTick на 170 МГц
+    last_time = now;*/
+
+    
+    
     IMU_SetBank(0);
     I2C_ReadMulti(IMU_ADDR, REG_ACCEL_GYRO_START, buf, 14);
 
@@ -136,12 +196,15 @@ void IMU_ReadAccel(void) {
     imu_ay = (int16_t)((buf[2] << 8) | buf[3]);
     imu_az = (int16_t)((buf[4] << 8) | buf[5]);
 
-    accel_x = (float)imu_ax / 16384.0f;
-    accel_y = (float)imu_ay / 16384.0f;
-    accel_z = (float)imu_az / 16384.0f;
+    accel_x = (float)imu_ax / 16384.0f - accel_offset_x;
+    accel_y = (float)imu_ay / 16384.0f - accel_offset_y;
+    accel_z = (float)imu_az / 16384.0f - accel_offset_z;
 
-    pitch_acc = atan2f(accel_y, accel_z) * 57.2958f;
-    roll_acc  = atan2f(-accel_x, sqrtf(accel_y*accel_y + accel_z*accel_z)) * 57.2958f;
+    roll_acc  = -atan2f(accel_x, accel_z) * 57.2958f;
+    pitch_acc = atan2f(-accel_y,sqrtf(accel_x * accel_x + accel_z * accel_z)) * 57.2958f;
+
+   // pitch_acc = atan2f(accel_y, accel_z) * 57.2958f;
+   // roll_acc  = atan2f(-accel_x, sqrtf(accel_y*accel_y + accel_z*accel_z)) * 57.2958f;
 
     // --- GYRO RAW ---
     imu_gx = (int16_t)((buf[6] << 8) | buf[7]);
@@ -157,22 +220,32 @@ void IMU_ReadAccel(void) {
     // --- GYRO DEG/SEC +BIAS---
     const float scale = 2000.0f / 32768.0f;
 
-    gyro_roll_rate  = gy * scale;  // <-- теперь roll сидит на gy
-    gyro_pitch_rate = gx * scale;  // <-- а pitch на gx
+    gyro_roll_rate  = gy * scale;  // 
+    gyro_pitch_rate = gx * scale;  // 
     gyro_yaw_rate   = gz * scale;
 
     
     // === INTEGRATE GYRO ===
-    float dt = 0.02f;   // если IMU вызывается каждые 20 мс (50 Гц)
-    roll_angle  += gyro_roll_rate  * dt;
-    pitch_angle += gyro_pitch_rate * dt;
+    roll_gyro  += gyro_roll_rate  * dt;
+    pitch_gyro += gyro_pitch_rate * dt;
+
+    if (roll_gyro > 90.0f)  roll_gyro = 90.0f;
+    if (roll_gyro < -90.0f) roll_gyro = -90.0f;
+
+    if (pitch_gyro > 90.0f)  pitch_gyro = 90.0f;
+    if (pitch_gyro < -90.0f) pitch_gyro = -90.0f;
+
 
     
     // === COMPLEMENTARY FILTER ===
-    float alpha = 0.995f;  // можно будет подстроить
+    float alpha = 1.0f;
 
-    roll_angle  = alpha * roll_angle  + (1.0f - alpha) * roll_acc;
-    pitch_angle = alpha * pitch_angle + (1.0f - alpha) * pitch_acc;
+    roll_angle  = alpha * roll_gyro  + (1.0f - alpha) * roll_acc;
+    pitch_angle = alpha * pitch_gyro + (1.0f - alpha) * pitch_acc;
+    
+    roll_gyro = roll_angle;
+    pitch_gyro = pitch_angle;
+
 
 
 }

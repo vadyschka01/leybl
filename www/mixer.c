@@ -20,10 +20,13 @@ void Mixer_Update(void) {
     // M4 (front-right, CCW)
     // M2 (rear-left, CCW)
     // M3 (rear-right, CW)
+ 
+    
     int m1 = (int)(thr - pitch + roll - yaw);
     int m4 = (int)(thr - pitch - roll + yaw);
     int m2 = (int)(thr + pitch + roll + yaw);
-    int m3 = (int)(thr + pitch - roll - yaw);
+    int m3 = (int)(thr + pitch - roll - yaw); 
+
 
 
     if (m1 < 1050) m1 = 1050; if (m1 > 2000) m1 = 2000;

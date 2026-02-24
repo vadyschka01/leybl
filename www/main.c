@@ -24,6 +24,7 @@ int main(void) {
     // === 2. ПОТОМ IMU ===
     I2C1_Init();
     IMU_Init();
+    IMU_CalibrateAccel();
     IMU_CalibrateGyro();
     
     
@@ -38,6 +39,11 @@ int main(void) {
     PID_Init();    // pid иниц
 
     uint32_t last_imu = 0;
+
+    
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;    //----для dt
+    DWT->CYCCNT = 0;
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
     while (1) {
 
