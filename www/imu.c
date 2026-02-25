@@ -32,6 +32,16 @@ volatile int16_t imu_gx = 0;
 volatile int16_t imu_gy = 0;
 volatile int16_t imu_gz = 0;
 
+//----------биквад
+typedef struct {
+    float b0, b1, b2;
+    float a1, a2;
+    float d1, d2;
+} biquad_t;
+
+static biquad_t accel_x_f, accel_y_f, accel_z_f;
+static biquad_t gyro_x_f,  gyro_y_f,  gyro_z_f;
+
 
 // ---------------- bias ----------------
 float gyro_bias_x = 0.0f;
@@ -95,16 +105,87 @@ static void IMU_WriteReg(uint8_t reg, uint8_t val) {
 }
 
 void IMU_SetBank(uint8_t bank) {
-    IMU_WriteReg(0x7F, (uint8_t)(bank << 4));
+    uint8_t val = (bank & 0x03) << 4;   // 0, 0x10, 0x20, 0x30
+    IMU_WriteReg(0x7F, val);
 }
 
-void IMU_Init(void) {
-    IMU_SetBank(0);
-    IMU_WriteReg(0x06, 0x80); // reset
-    delay_long(100000);
-    IMU_WriteReg(0x06, 0x01); // clock
-    delay_long(100000);
+//---------------биквад
+static float biquad_apply(biquad_t *f, float x) {
+    float result = f->b0 * x + f->d1;
+    f->d1 = f->b1 * x - f->a1 * result + f->d2;
+    f->d2 = f->b2 * x - f->a2 * result;
+    return result;
 }
+
+static void biquad_init_lpf(biquad_t *f, float cutoff, float sample_rate) {
+    float w0 = 2.0f * 3.1415926f * cutoff / sample_rate;
+    float cosw0 = cosf(w0);
+    float sinw0 = sinf(w0);
+    float Q = 0.707f;
+
+    float alpha = sinw0 / (2.0f * Q);
+
+    float b0 = (1 - cosw0) * 0.5f;
+    float b1 = 1 - cosw0;
+    float b2 = (1 - cosw0) * 0.5f;
+    float a0 = 1 + alpha;
+    float a1 = -2 * cosw0;
+    float a2 = 1 - alpha;
+
+    f->b0 = b0 / a0;
+    f->b1 = b1 / a0;
+    f->b2 = b2 / a0;
+    f->a1 = a1 / a0;
+    f->a2 = a2 / a0;
+
+    f->d1 = 0;
+    f->d2 = 0;
+}
+
+
+void IMU_Init(void) {
+    // BANK 0
+    IMU_SetBank(0);
+
+    // Reset
+    IMU_WriteReg(0x06, 0x80);   // PWR_MGMT_1: DEVICE_RESET = 1
+    delay_long(100000);
+
+    // Выход из sleep + выбор тактирования (CLKSEL = 1, SLEEP = 0)
+    IMU_WriteReg(0x06, 0x01);
+    delay_long(100000);
+
+    // Включить аксель и гиру (PWR_MGMT_2 = 0x00)
+    IMU_WriteReg(0x07, 0x00);
+
+    // BANK 2 — настройки диапазонов и фильтров
+    IMU_SetBank(2);
+
+    // GYRO_CONFIG_1 (адрес 0x01 в BANK 2)
+    // GYRO_FS_SEL = 3 (±2000 dps), DLPF включен, частота по умолчанию
+    IMU_WriteReg(0x01, 0x07);   // 0b0000 0111
+
+    // ACCEL_CONFIG (адрес 0x14 в BANK 2)
+    // ACCEL_FS_SEL = 0 (±2g, 16384 LSB/g — как ты используешь)
+    IMU_WriteReg(0x14, 0x00);
+
+    // Вернуться в BANK 0 для чтения данных
+    IMU_SetBank(0);
+    
+    // === BIQUAD FILTER INIT ===
+    float fs = 100.0f;  // частота вызова IMU_ReadAccel()
+
+    // ГИРО — LPF 80 Гц
+    biquad_init_lpf(&gyro_x_f, 25.0f, fs);
+    biquad_init_lpf(&gyro_y_f, 25.0f, fs);
+    biquad_init_lpf(&gyro_z_f, 25.0f, fs);
+
+    // АКСЕЛЬ — LPF 30 Гц
+    biquad_init_lpf(&accel_x_f, 25.0f, fs);
+    biquad_init_lpf(&accel_y_f, 25.0f, fs);
+    biquad_init_lpf(&accel_z_f, 25.0f, fs);
+}
+
 
 void IMU_CalibrateAccel(void) {
     const int samples = 500;
@@ -168,7 +249,10 @@ void IMU_CalibrateGyro(void) {
 void IMU_ReadAccel(void) {
     uint8_t buf[14];
     
-    float dt = 0.01f;  // ----50ГЦ
+    static long test_count=0;
+    test_count++;
+    
+    float dt = 0.01f;  // ----100ГЦ
    
     IMU_SetBank(0);
     I2C_ReadMulti(IMU_ADDR, REG_ACCEL_GYRO_START, buf, 14);
@@ -181,12 +265,16 @@ void IMU_ReadAccel(void) {
     accel_x = (float)imu_ax / 16384.0f - accel_offset_x;
     accel_y = (float)imu_ay / 16384.0f - accel_offset_y;
     accel_z = (float)imu_az / 16384.0f - accel_offset_z;
+    
+    //биквад аксель
+    accel_x = biquad_apply(&accel_x_f, accel_x);
+    accel_y = biquad_apply(&accel_y_f, accel_y);
+    accel_z = biquad_apply(&accel_z_f, accel_z);
+
 
     roll_acc  = -atan2f(accel_x, accel_z) * 57.2958f;
-    pitch_acc = atan2f(accel_y,sqrtf(accel_x * accel_x + accel_z * accel_z)) * 57.2958f;
+    pitch_acc = -atan2f(accel_y,sqrtf(accel_x * accel_x + accel_z * accel_z)) * 57.2958f;
 
-   // pitch_acc = atan2f(accel_y, accel_z) * 57.2958f;
-   // roll_acc  = atan2f(-accel_x, sqrtf(accel_y*accel_y + accel_z*accel_z)) * 57.2958f;
 
     // --- GYRO RAW ---
     imu_gx = (int16_t)((buf[6] << 8) | buf[7]);
@@ -197,14 +285,21 @@ void IMU_ReadAccel(void) {
     float gx = imu_gx - gyro_bias_x;
     float gy = imu_gy - gyro_bias_y;
     float gz = imu_gz - gyro_bias_z;
+    
 
 
     // --- GYRO DEG/SEC +BIAS---
     const float scale = 2000.0f / 32768.0f;
 
     gyro_roll_rate  = gy * scale;  // 
-    gyro_pitch_rate = gx * scale;  // 
+    gyro_pitch_rate = -gx * scale;  // 
     gyro_yaw_rate   = gz * scale;
+    
+        //биквад гиро
+    gx = biquad_apply(&gyro_x_f, gx);
+    gy = biquad_apply(&gyro_y_f, gy);
+    gz = biquad_apply(&gyro_z_f, gz);
+
 
     
     // === INTEGRATE GYRO ===
