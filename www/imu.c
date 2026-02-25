@@ -168,26 +168,8 @@ void IMU_CalibrateGyro(void) {
 void IMU_ReadAccel(void) {
     uint8_t buf[14];
     
-    static uint32_t last = 0;           // ---dt
-    uint32_t now = DWT->CYCCNT;
-
-    // частота твоего МК — 170 МГц
-    float dt = (now - last) / 170000000.0f;
-
-    last = now;
-
-    // защита от нулевого dt
-    if (dt <= 0.0f || dt > 0.1f) dt = 0.005f;
-
-    
-    
-    //------dF
-    /*uint32_t now = SysTick->VAL; // или TIMx->CNT
-    float dt = (last_time - now) * (1.0f / 170000000.0f); // если SysTick на 170 МГц
-    last_time = now;*/
-
-    
-    
+    float dt = 0.01f;  // ----50ГЦ
+   
     IMU_SetBank(0);
     I2C_ReadMulti(IMU_ADDR, REG_ACCEL_GYRO_START, buf, 14);
 
@@ -201,7 +183,7 @@ void IMU_ReadAccel(void) {
     accel_z = (float)imu_az / 16384.0f - accel_offset_z;
 
     roll_acc  = -atan2f(accel_x, accel_z) * 57.2958f;
-    pitch_acc = atan2f(-accel_y,sqrtf(accel_x * accel_x + accel_z * accel_z)) * 57.2958f;
+    pitch_acc = atan2f(accel_y,sqrtf(accel_x * accel_x + accel_z * accel_z)) * 57.2958f;
 
    // pitch_acc = atan2f(accel_y, accel_z) * 57.2958f;
    // roll_acc  = atan2f(-accel_x, sqrtf(accel_y*accel_y + accel_z*accel_z)) * 57.2958f;
@@ -229,16 +211,16 @@ void IMU_ReadAccel(void) {
     roll_gyro  += gyro_roll_rate  * dt;
     pitch_gyro += gyro_pitch_rate * dt;
 
-    if (roll_gyro > 90.0f)  roll_gyro = 90.0f;
-    if (roll_gyro < -90.0f) roll_gyro = -90.0f;
+    if (roll_gyro > 60.0f)  roll_gyro = 60.0f;
+    if (roll_gyro < -60.0f) roll_gyro = -60.0f;
 
-    if (pitch_gyro > 90.0f)  pitch_gyro = 90.0f;
-    if (pitch_gyro < -90.0f) pitch_gyro = -90.0f;
+    if (pitch_gyro > 60.0f)  pitch_gyro = 60.0f;
+    if (pitch_gyro < -60.0f) pitch_gyro = -60.0f;
 
 
     
     // === COMPLEMENTARY FILTER ===
-    float alpha = 1.0f;
+    float alpha = 0.995f;
 
     roll_angle  = alpha * roll_gyro  + (1.0f - alpha) * roll_acc;
     pitch_angle = alpha * pitch_gyro + (1.0f - alpha) * pitch_acc;

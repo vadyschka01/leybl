@@ -40,15 +40,12 @@ int main(void) {
 
     uint32_t last_imu = 0;
 
-    
-    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;    //----для dt
-    DWT->CYCCNT = 0;
-    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+   
 
     while (1) {
 
         // === Чтение IMU ===
-        if (ms - last_imu >= 20) {
+        if (ms - last_imu >= 10) {
             IMU_ReadAccel();
             last_imu = ms;
         }
