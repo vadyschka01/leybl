@@ -21,14 +21,14 @@ static float pid_yaw_ki = 0.0f;
 static float pid_yaw_kd = 0.0f;  //0.05
 
 // Коэффициенты только для roll (ось X)
-static float pid_roll_kp = 0.5f;   //0.22
+static float pid_roll_kp = 0.0f;   //0.22
 static float pid_roll_ki = 0.0f;
-static float pid_roll_kd = 0.3f;   //0.02
+static float pid_roll_kd = 0.09f;   //0.02
 
 // Коэффициенты только для pitch (ось Y)
-static float pid_pitch_kp = 0.5f;   //   0.25
+static float pid_pitch_kp = 0.0f;   //   0.25
 static float pid_pitch_ki = 0.0f;
-static float pid_pitch_kd = 0.3f;   // 0.01150
+static float pid_pitch_kd = 0.09f;   // 0.01150
 
 
 void PID_Init(void) {

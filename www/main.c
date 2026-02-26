@@ -2,11 +2,12 @@
 #include "imu.h"
 #include "sbus.h"
 #include "motors.h"
+#include "pid.h"
 
 volatile uint32_t ms = 0;
 volatile uint32_t tim6_count = 0;
 
-uint8_t armed = 0;
+volatile uint8_t armed = 0;
 
 // ===== SysTick 1 kHz =====
 void SysTick_Handler(void) {
@@ -27,21 +28,15 @@ void TIM6_Init_100Hz(void) {
 }
 
 // ===== TIM6 IRQ — основной цикл управления =====
+volatile uint8_t imu_flag = 0;
+
 void TIM6_DAC_IRQHandler(void) {
     if (TIM6->SR & TIM_SR_UIF) {
-        TIM6->SR = 0;        // сброс флага
-        tim6_count++;
-
-        IMU_ReadAccel();
-
-        if (armed) {
-            PID_Update();
-            Mixer_Update();
-        } else {
-            Motors_Stop();
-        }
+        TIM6->SR = 0;
+        imu_flag = 1;   // только ставим флаг!
     }
 }
+
 
 int main(void) {
 
@@ -72,23 +67,33 @@ int main(void) {
     TIM6_Init_100Hz();
 
     // ===== MAIN LOOP =====
-    while (1) {
+   while (1) {
 
-        // === ARM / DISARM через SWA ===
-        int swa = rc_channels[4];
+    // ARM / DISARM
+    int swa = rc_channels[4];
 
-        if (!armed) {
-            if (swa > 1500 && rc_channels[2] < 1050) {
-                armed = 1;
-            }
-        } else {
-            if (swa < 1500) {
-                armed = 0;
-                Set_Motors(900);
-            }
+    if (!armed) {
+        if (swa > 1500 && rc_channels[2] < 1050) {
+            armed = 1;
         }
-
-        // SBUS обновляется по прерыванию LPUART1
-        // IMU/PID/Mixer обновляются по прерыванию TIM6
+    } else {
+        if (swa < 1500) {
+            armed = 0;
+            Set_Motors(900);
+        }
     }
+
+    // === ОСНОВНОЙ ЦИКЛ УПРАВЛЕНИЯ ===
+    if (imu_flag) {
+        imu_flag = 0;
+
+        IMU_ReadAccel();   // тяжёлая функция
+        if (armed) {
+            PID_Update();
+            Mixer_Update();
+        } else {
+            Motors_Stop();
+        }
+    }
+   }
 }

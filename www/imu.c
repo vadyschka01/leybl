@@ -162,13 +162,33 @@ void IMU_Init(void) {
     // BANK 2 — настройки диапазонов и фильтров
     IMU_SetBank(2);
 
-    // GYRO_CONFIG_1 (адрес 0x01 в BANK 2)
-    // GYRO_FS_SEL = 3 (±2000 dps), DLPF включен, частота по умолчанию
-    IMU_WriteReg(0x01, 0x07);   // 0b0000 0111
 
-    // ACCEL_CONFIG (адрес 0x14 в BANK 2)
-    // ACCEL_FS_SEL = 0 (±2g, 16384 LSB/g — как ты используешь)
-    IMU_WriteReg(0x14, 0x00);
+    // ===============================
+    //   INTERNAL DLPF = 73.3 Hz
+    // ===============================
+
+    // --- GYRO CONFIG ---
+    // BANK2, REG 0x01 (GYRO_CONFIG_1)
+    // DLPFCFG = 3 → ~73.3 Hz
+    // FCHOICE = 1 → enable DLPF
+    // FS_SEL  = 3 → ±2000 dps
+    IMU_WriteReg(0x01,
+        (3 << 5) |   // DLPFCFG = 3 → 73.3 Hz
+        (1 << 4) |   // FCHOICE = 1 → enable DLPF
+        (3 << 2));   // FS_SEL = 3 → ±2000 dps
+
+
+    // --- ACCEL CONFIG ---
+    // BANK2, REG 0x14 (ACCEL_CONFIG)
+    // DLPFCFG = 3 → ~73.3 Hz (для акселя это ~74 Hz)
+    // FCHOICE = 1 → enable DLPF
+    // FS_SEL  = 0 → ±2g
+    IMU_WriteReg(0x14,
+        (3 << 5) |   // DLPFCFG = 3 → 73.3 Hz
+        (1 << 4) |   // FCHOICE = 1 → enable DLPF
+        (0 << 2));   // FS_SEL = 0 → ±2g
+
+
 
     // Вернуться в BANK 0 для чтения данных
     IMU_SetBank(0);
@@ -176,12 +196,12 @@ void IMU_Init(void) {
     // === BIQUAD FILTER INIT ===
     float fs = 100.0f;  // частота вызова IMU_ReadAccel()
 
-    // ГИРО — LPF 80 Гц
+    // ГИРО — LPF 25 Гц
     biquad_init_lpf(&gyro_x_f, 25.0f, fs);
     biquad_init_lpf(&gyro_y_f, 25.0f, fs);
     biquad_init_lpf(&gyro_z_f, 25.0f, fs);
 
-    // АКСЕЛЬ — LPF 30 Гц
+    // АКСЕЛЬ — LPF 25 Гц
     biquad_init_lpf(&accel_x_f, 25.0f, fs);
     biquad_init_lpf(&accel_y_f, 25.0f, fs);
     biquad_init_lpf(&accel_z_f, 25.0f, fs);
@@ -289,40 +309,51 @@ void IMU_ReadAccel(void) {
     
 
 
-    // --- GYRO DEG/SEC +BIAS---
+    // --- GYRO RAW (bias removed) ---
+    float gx_raw = imu_gx - gyro_bias_x;
+    float gy_raw = imu_gy - gyro_bias_y;
+    float gz_raw = imu_gz - gyro_bias_z;
+
+    // --- FILTER FIRST ---
+    float gx_f = biquad_apply(&gyro_x_f, gx_raw);
+    float gy_f = biquad_apply(&gyro_y_f, gy_raw);
+    float gz_f = biquad_apply(&gyro_z_f, gz_raw);
+
+    // --- THEN SCALE ---
     const float scale = 2000.0f / 32768.0f;
 
-    gyro_roll_rate  = gy * scale;  // 
-    gyro_pitch_rate = -gx * scale;  // 
-    gyro_yaw_rate   = gz * scale;
-    
-        //биквад гиро
-    gx = biquad_apply(&gyro_x_f, gx);
-    gy = biquad_apply(&gyro_y_f, gy);
-    gz = biquad_apply(&gyro_z_f, gz);
+    gyro_roll_rate  =  gy_f * scale;
+    gyro_pitch_rate = -gx_f * scale;
+    gyro_yaw_rate   =  gz_f * scale;
+
 
 
     
     // === INTEGRATE GYRO ===
-    roll_gyro  += gyro_roll_rate  * dt;
-    pitch_gyro += gyro_pitch_rate * dt;
+   // roll_gyro  += gyro_roll_rate  * dt;
+   // pitch_gyro += gyro_pitch_rate * dt;
 
-    if (roll_gyro > 60.0f)  roll_gyro = 60.0f;
-    if (roll_gyro < -60.0f) roll_gyro = -60.0f;
+   // if (roll_gyro > 60.0f)  roll_gyro = 60.0f;
+   // if (roll_gyro < -60.0f) roll_gyro = -60.0f;
 
-    if (pitch_gyro > 60.0f)  pitch_gyro = 60.0f;
-    if (pitch_gyro < -60.0f) pitch_gyro = -60.0f;
+   // if (pitch_gyro > 60.0f)  pitch_gyro = 60.0f;
+   // if (pitch_gyro < -60.0f) pitch_gyro = -60.0f;
 
 
     
     // === COMPLEMENTARY FILTER ===
-    float alpha = 0.995f;
+    float alpha = 0.98f;
 
-    roll_angle  = alpha * roll_gyro  + (1.0f - alpha) * roll_acc;
-    pitch_angle = alpha * pitch_gyro + (1.0f - alpha) * pitch_acc;
+    roll_angle += gyro_roll_rate * dt; 
+    pitch_angle += gyro_pitch_rate * dt;
     
-    roll_gyro = roll_angle;
-    pitch_gyro = pitch_angle;
+    roll_angle = alpha * roll_angle + (1.0f - alpha) * roll_acc;
+    pitch_angle = alpha * pitch_angle + (1.0f - alpha) * pitch_acc;
+  //  roll_angle  = alpha * roll_gyro  + (1.0f - alpha) * roll_acc;
+  //  pitch_angle = alpha * pitch_gyro + (1.0f - alpha) * pitch_acc;
+    
+  //  roll_gyro = roll_angle;
+  //  pitch_gyro = pitch_angle;
 
 
 
