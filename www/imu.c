@@ -79,6 +79,7 @@ void I2C1_Init(void) {
     I2C1->CR1 |= I2C_CR1_PE;
 }
 
+
 void I2C_ReadMulti(uint8_t devAddr, uint8_t regAddr, uint8_t *buf, uint8_t len) {
     I2C1->CR2 = (devAddr & I2C_CR2_SADD) | (1 << 16) | I2C_CR2_START;
     while (!(I2C1->ISR & I2C_ISR_TXIS));

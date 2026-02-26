@@ -4,54 +4,78 @@
 #include "motors.h"
 
 volatile uint32_t ms = 0;
+volatile uint32_t tim6_count = 0;
+
 uint8_t armed = 0;
 
+// ===== SysTick 1 kHz =====
 void SysTick_Handler(void) {
     ms++;
 }
 
+// ===== TIM6 100 Hz =====
+void TIM6_Init_100Hz(void) {
+    RCC->APB1ENR1 |= RCC_APB1ENR1_TIM6EN;
+
+    TIM6->PSC = 16000 - 1;   // 160 MHz / 16000 = 1000 Hz
+    TIM6->ARR = 10 - 1;     // 1000 Hz / 10 = 100 Hz
+
+    TIM6->DIER |= TIM_DIER_UIE;
+    NVIC_EnableIRQ(TIM6_DAC_IRQn);
+
+    TIM6->CR1 |= TIM_CR1_CEN;
+}
+
+// ===== TIM6 IRQ — основной цикл управления =====
+void TIM6_DAC_IRQHandler(void) {
+    if (TIM6->SR & TIM_SR_UIF) {
+        TIM6->SR = 0;        // сброс флага
+        tim6_count++;
+
+        IMU_ReadAccel();
+
+        if (armed) {
+            PID_Update();
+            Mixer_Update();
+        } else {
+            Motors_Stop();
+        }
+    }
+}
+
 int main(void) {
+
+    // === CLOCK ===
     RCC->CR |= RCC_CR_HSION;
     while (!(RCC->CR & RCC_CR_HSIRDY));
 
-    SysTick_Config(SystemCoreClock / 1000U);
+    SysTick_Config(SystemCoreClock / 1000U);   // 1 kHz
 
-    // === 1. СНАЧАЛА МОТОРЫ ===
+    // === 1. МОТОРЫ ===
     Motors_Init();
     Set_Motors(900); // минимальный сигнал ESC
     for (volatile int i = 0; i < 6000000; i++) __NOP(); // 3 секунды
 
-    // === 2. ПОТОМ IMU ===
+    // === 2. IMU ===
     I2C1_Init();
     IMU_Init();
     IMU_CalibrateAccel();
     IMU_CalibrateGyro();
-    
-    
-    roll_angle  = 0.0f;   // ---- обнуление углов 
+
+    roll_angle  = 0.0f;
     pitch_angle = 0.0f;
 
-
-    
-    // === 3. ПОТОМ SBUS ===
+    // === 3. SBUS ===
     LPUART1_SBUS_Init();
-    
-    PID_Init();    // pid иниц
 
-    uint32_t last_imu = 0;
+    PID_Init();
+    TIM6_Init_100Hz();
 
-   
-
+    // ===== MAIN LOOP =====
     while (1) {
 
-        // === Чтение IMU ===
-        if (ms - last_imu >= 10) {
-            IMU_ReadAccel();
-            last_imu = ms;
-        }
-
         // === ARM / DISARM через SWA ===
-        int swa = rc_channels[4]; // канал тумблера
+        int swa = rc_channels[4];
 
         if (!armed) {
             if (swa > 1500 && rc_channels[2] < 1050) {
@@ -64,13 +88,7 @@ int main(void) {
             }
         }
 
-        if (armed) {
-            PID_Update();
-            Mixer_Update();
-        } else {
-            Motors_Stop();
-        }
-
-
+        // SBUS обновляется по прерыванию LPUART1
+        // IMU/PID/Mixer обновляются по прерыванию TIM6
     }
 }
