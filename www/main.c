@@ -19,7 +19,7 @@ void TIM6_Init_100Hz(void) {
     RCC->APB1ENR1 |= RCC_APB1ENR1_TIM6EN;
 
     TIM6->PSC = 16000 - 1;   // 160 MHz / 16000 = 1000 Hz
-    TIM6->ARR = 100 - 1;     // 1000 Hz / 10 = 100 Hz
+    TIM6->ARR = 10 - 1;     // 1000 Hz / 10 = 100 Hz
 
     TIM6->DIER |= TIM_DIER_UIE;
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
