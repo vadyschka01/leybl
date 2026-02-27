@@ -19,7 +19,7 @@ void TIM6_Init_100Hz(void) {
     RCC->APB1ENR1 |= RCC_APB1ENR1_TIM6EN;
 
     TIM6->PSC = 16000 - 1;   // 160 MHz / 16000 = 1000 Hz
-    TIM6->ARR = 10 - 1;     // 1000 Hz / 10 = 100 Hz
+    TIM6->ARR = 100 - 1;     // 1000 Hz / 10 = 100 Hz
 
     TIM6->DIER |= TIM_DIER_UIE;
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
@@ -33,7 +33,7 @@ volatile uint8_t imu_flag = 0;
 void TIM6_DAC_IRQHandler(void) {
     if (TIM6->SR & TIM_SR_UIF) {
         TIM6->SR = 0;
-        imu_flag = 1;   // только ставим флаг!
+        imu_flag = 1;   // только флаг
     }
 }
 
@@ -87,7 +87,7 @@ int main(void) {
     if (imu_flag) {
         imu_flag = 0;
 
-        IMU_ReadAccel();   // тяжёлая функция
+IMU_ReadAccelGyro();   // тяжёлая функция
         if (armed) {
             PID_Update();
             Mixer_Update();
