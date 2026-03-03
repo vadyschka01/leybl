@@ -75,7 +75,7 @@ void LPUART1_SBUS_Init(void)
     LPUART1->CR1 |= USART_CR1_RXNEIE;
     LPUART1->CR1 |= USART_CR1_RE | USART_CR1_UE;
 
-    NVIC_SetPriority(LPUART1_IRQn, 1);
+    NVIC_SetPriority(LPUART1_IRQn, 0);
     NVIC_EnableIRQ(LPUART1_IRQn);
 }
 

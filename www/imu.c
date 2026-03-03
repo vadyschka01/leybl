@@ -169,25 +169,21 @@ void IMU_Init(void) {
 
     // --- GYRO CONFIG ---
     // BANK2, REG 0x01 (GYRO_CONFIG_1)
-    // DLPFCFG = 3 → ~73.3 Hz
-    // FCHOICE = 1 → enable DLPF
-    // FS_SEL  = 3 → ±2000 dps
-    IMU_WriteReg(0x01,
-        (3 << 5) |   // DLPFCFG = 3 → 73.3 Hz
-        (1 << 4) |   // FCHOICE = 1 → enable DLPF
-        (3 << 2));   // FS_SEL = 3 → ±2000 dps
-
+    // DLPFCFG = 3 → ~36.3 Hz
+    // FS_SEL  = 3 (±2000 dps) (биты 2:1) -> (3 << 1)
+    // FCHOICE = 0 (Enable DLPF)
+    
+    uint8_t gyro_config = (4 << 3) | (3 << 1) | 1; 
+    IMU_WriteReg(0x01, gyro_config);
 
     // --- ACCEL CONFIG ---
     // BANK2, REG 0x14 (ACCEL_CONFIG)
-    // DLPFCFG = 3 → ~73.3 Hz (для акселя это ~74 Hz)
-    // FCHOICE = 1 → enable DLPF
-    // FS_SEL  = 0 → ±2g
-    IMU_WriteReg(0x14,
-        (3 << 5) |   // DLPFCFG = 3 → 73.3 Hz
-        (1 << 4) |   // FCHOICE = 1 → enable DLPF
-        (0 << 2));   // FS_SEL = 0 → ±2g
-
+    // DLPFCFG = 3 (биты 5:3) -> (3 << 3) 
+    // FS_SEL  = 0 → ±2g (биты 2:1) -> (0 << 1)
+    // FCHOICE = 1 → enable DLPF (бит 0) -> (1 << 0)
+    
+    uint8_t accel_config = (3 << 3) | (0 << 1) | 1;
+    IMU_WriteReg(0x14, accel_config);
 
 
     // Вернуться в BANK 0 для чтения данных
@@ -315,23 +311,17 @@ void IMU_ReadAccel(void) {
     float gz_raw = imu_gz - gyro_bias_z;
 
     // --- FILTER FIRST ---
-    float gx_f = biquad_apply(&gyro_x_f, gx_raw);
+ /*   float gx_f = biquad_apply(&gyro_x_f, gx_raw);
     float gy_f = biquad_apply(&gyro_y_f, gy_raw);
-    float gz_f = biquad_apply(&gyro_z_f, gz_raw);
+    float gz_f = biquad_apply(&gyro_z_f, gz_raw); */
 
     // --- THEN SCALE ---
-    const float scale = 2000.0f / 32768.0f;
+    const float scale = 16.4f;
 
-    gyro_roll_rate  =  gy_f * scale;
-    gyro_pitch_rate = -gx_f * scale;
-    gyro_yaw_rate   =  gz_f * scale;
+    gyro_roll_rate  =  gy_raw / scale;
+    gyro_pitch_rate =  -gx_raw / scale;
+    gyro_yaw_rate   =  gz_raw / scale;
 
-
-
-    
-    // === INTEGRATE GYRO ===
-   // roll_gyro  += gyro_roll_rate  * dt;
-   // pitch_gyro += gyro_pitch_rate * dt;
 
    // if (roll_gyro > 60.0f)  roll_gyro = 60.0f;
    // if (roll_gyro < -60.0f) roll_gyro = -60.0f;
@@ -342,7 +332,7 @@ void IMU_ReadAccel(void) {
 
     
     // === COMPLEMENTARY FILTER ===
-    float alpha = 0.98f;
+    float alpha = 1.0f;
 
     roll_angle += gyro_roll_rate * dt; 
     pitch_angle += gyro_pitch_rate * dt;

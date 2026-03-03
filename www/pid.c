@@ -16,19 +16,19 @@ float pitch_rate = 0.0f;
 static float last_roll_error = 0.0f;  // для производной
 
 // Коэффициенты только для yaw (ось Z)
-static float pid_yaw_kp = 0.00f;   // 0.15
+static float pid_yaw_kp = 0.0f;   // 0.15
 static float pid_yaw_ki = 0.0f;
-static float pid_yaw_kd = 0.0f;  //0.05
+static float pid_yaw_kd = 3.0f;  //0.17
 
 // Коэффициенты только для roll (ось X)
-static float pid_roll_kp = 0.0f;   //0.22
+static float pid_roll_kp = 0.5f;   //0.09
 static float pid_roll_ki = 0.0f;
-static float pid_roll_kd = 0.09f;   //0.02
+static float pid_roll_kd = 0.1f;   //0.2
 
 // Коэффициенты только для pitch (ось Y)
-static float pid_pitch_kp = 0.0f;   //   0.25
+static float pid_pitch_kp = 0.5f;   //   0.1
 static float pid_pitch_ki = 0.0f;
-static float pid_pitch_kd = 0.09f;   // 0.01150
+static float pid_pitch_kd = 0.1f;   // 0.16
 
 
 void PID_Init(void) {
@@ -43,7 +43,7 @@ void PID_Update(void)
     // === 1. Скорости из IMU ===
     roll_rate  = gyro_roll_rate;
     pitch_rate = gyro_pitch_rate;
-    float yaw_rate   = gyro_yaw_rate;
+    float yaw_rate = gyro_yaw_rate;
 
     // === 2. Стики → желаемые углы ===
     float roll_angle_set  = (rc_channels[0] - 1024) * 0.05f;
@@ -69,13 +69,13 @@ void PID_Update(void)
 
     // --- Pitch ---
     float pitch_error = pitch_rate_set - pitch_rate;
-    float pitch_deriv = -pitch_rate;
+    float pitch_deriv = - pitch_rate;
     pid_pitch_output = pid_pitch_kp * pitch_error + pid_pitch_kd * pitch_deriv;
 
     // --- Yaw ---
     float yaw_error = yaw_rate_set - yaw_rate;
-    pid_yaw_output = pid_yaw_kp * yaw_error;
-
+    float yaw_deriv = -yaw_rate; // классический D по гире
+    pid_yaw_output = pid_yaw_kp * yaw_error + pid_yaw_kd * yaw_deriv;
 }
 
 
