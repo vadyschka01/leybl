@@ -8,9 +8,11 @@ float pid_yaw_output   = 0.0f;
 
 float roll_rate_set = 0.0f;
 float pitch_rate_set = 0.0f;
+float yaw_rate_set = 0.0f;
 
 float roll_rate = 0.0f;
 float pitch_rate = 0.0f;
+float yaw_rate = 0.0f;
 
 
 static float last_roll_error = 0.0f;  // для производной
@@ -43,22 +45,24 @@ void PID_Update(void)
     // === 1. Скорости из IMU ===
     roll_rate  = gyro_roll_rate;
     pitch_rate = gyro_pitch_rate;
-    float yaw_rate = gyro_yaw_rate;
+    yaw_rate = gyro_yaw_rate;
 
     // === 2. Стики → желаемые углы ===
     float roll_angle_set  = (rc_channels[0] - 1024) * 0.05f;
     float pitch_angle_set = (rc_channels[1] - 1024) * 0.05f;
-    float yaw_rate_set    = (rc_channels[3] - 1024) * 0.5f;
+    float yaw_angle_set    = (rc_channels[3] - 1024) * 0.5f;
 
     // === 3. Ошибка по углам ===
     float roll_angle_error  = roll_angle_set  - roll_angle;
     float pitch_angle_error = pitch_angle_set - pitch_angle;
+    float yaw_angle_error = yaw_angle_set - yaw_angle;
 
     // === 4. Внешний контур (ANGLE → RATE) ===
     float angle_kp = 3.0f;
 
     float roll_rate_set  = angle_kp * roll_angle_error;
-    float pitch_rate_set = angle_kp * pitch_angle_error; 
+    float pitch_rate_set = angle_kp * pitch_angle_error;
+    float yaw_rate_set = angle_kp * yaw_angle_error;
 
     // === 5. Внутренний RATE PID ===
 

@@ -171,7 +171,7 @@ void IMU_Init(void) {
     // BANK2, REG 0x01 (GYRO_CONFIG_1)
     // DLPFCFG = 3 → ~36.3 Hz
     // FS_SEL  = 3 (±2000 dps) (биты 2:1) -> (3 << 1)
-    // FCHOICE = 0 (Enable DLPF)
+    // FCHOICE = 1 (Enable DLPF)
     
     uint8_t gyro_config = (4 << 3) | (3 << 1) | 1; 
     IMU_WriteReg(0x01, gyro_config);
@@ -339,9 +339,7 @@ void IMU_ReadAccel(void) {
     
     roll_angle = alpha * roll_angle + (1.0f - alpha) * roll_acc;
     pitch_angle = alpha * pitch_angle + (1.0f - alpha) * pitch_acc;
-  //  roll_angle  = alpha * roll_gyro  + (1.0f - alpha) * roll_acc;
-  //  pitch_angle = alpha * pitch_gyro + (1.0f - alpha) * pitch_acc;
-    
+
   //  roll_gyro = roll_angle;
   //  pitch_gyro = pitch_angle;
 
