@@ -1,14 +1,14 @@
-C:\IAR\arm\bin\armproc.dll
+C:\iar\ewarm-9.70.1\arm\bin\armproc.dll
 
- C:\IAR\arm\bin\armstlink.dll
+ C:\iar\ewarm-9.70.1\arm\bin\armstlink.dll
 
- C:\www\Debug\Exe\www.out
+ C:\Users\vadychka\Documents\GitHub\leybl\www\Debug\Exe\www.out
 
- --plugin=C:\IAR\arm\bin\armLibSupportUniversal.dll
+ --plugin=C:\iar\ewarm-9.70.1\arm\bin\armLibSupportUniversal.dll
 
- --device_macro=C:\IAR\arm/config/debugger/ST/STM32G4xx.dmac
+ --device_macro=C:\iar\ewarm-9.70.1\arm/config/debugger/ST/STM32G4xx.dmac
 
- --flash_loader=C:\IAR\arm/config/flashloader/ST/FlashSTM32G43xxB.board
+ --flash_loader=C:\iar\ewarm-9.70.1\arm/config/flashloader/ST/FlashSTM32G43xxB.board
 
  
 

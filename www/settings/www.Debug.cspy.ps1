@@ -23,9 +23,9 @@
 
 if ($debugfile -eq "")
 {
-& "C:\IAR\common\bin\cspybat" -f "C:\www\settings\www.Debug.general.xcl" --backend -f "C:\www\settings\www.Debug.driver.xcl" 
+& "C:\iar\ewarm-9.70.1\common\bin\cspybat" -f "C:\Users\vadychka\Documents\GitHub\leybl\www\settings\www.Debug.general.xcl" --backend -f "C:\Users\vadychka\Documents\GitHub\leybl\www\settings\www.Debug.driver.xcl" 
 }
 else
 {
-& "C:\IAR\common\bin\cspybat" -f "C:\www\settings\www.Debug.general.xcl" --debug_file=$debugfile --backend -f "C:\www\settings\www.Debug.driver.xcl" 
+& "C:\iar\ewarm-9.70.1\common\bin\cspybat" -f "C:\Users\vadychka\Documents\GitHub\leybl\www\settings\www.Debug.general.xcl" --debug_file=$debugfile --backend -f "C:\Users\vadychka\Documents\GitHub\leybl\www\settings\www.Debug.driver.xcl" 
 }

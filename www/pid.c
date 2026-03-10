@@ -55,14 +55,14 @@ void PID_Update(void)
     // === 3. Ошибка по углам ===
     float roll_angle_error  = roll_angle_set  - roll_angle;
     float pitch_angle_error = pitch_angle_set - pitch_angle;
-    float yaw_angle_error = yaw_angle_set - yaw_angle;
+   // float yaw_angle_error = yaw_angle_set - yaw_angle;
 
     // === 4. Внешний контур (ANGLE → RATE) ===
     float angle_kp = 3.0f;
 
     float roll_rate_set  = angle_kp * roll_angle_error;
     float pitch_rate_set = angle_kp * pitch_angle_error;
-    float yaw_rate_set = angle_kp * yaw_angle_error;
+ //   float yaw_rate_set = angle_kp * yaw_angle_error;
 
     // === 5. Внутренний RATE PID ===
 

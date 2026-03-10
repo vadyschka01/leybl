@@ -27,3 +27,11 @@
 216	286	7926944666560808	C:/www/Debug/BrowseInfo/pid.c.json	7b6b76f4a05ffc1f
 287	350	7926944667270952	C:/www/Debug/BrowseInfo/sbus.c.json	69fc96b827bedd86
 350	386	7926944667910824	C:/www/Debug/compile_commands.json	8f42d08943d109f5
+1	48	7946040043487789	C:/Users/vadychka/Documents/GitHub/leybl/www/Debug/BrowseInfo/imu.c.json	6c74e0a3346b3b31
+49	103	7946040044113094	C:/Users/vadychka/Documents/GitHub/leybl/www/Debug/BrowseInfo/main.c.json	ca9aa5215e286508
+103	147	7946040044581697	C:/Users/vadychka/Documents/GitHub/leybl/www/Debug/BrowseInfo/mixer.c.json	1a54cf63a5dde5bb
+147	187	7946040045051067	C:/Users/vadychka/Documents/GitHub/leybl/www/Debug/BrowseInfo/motors.c.json	8361e856837e2dc7
+187	238	7946040045363592	C:/Users/vadychka/Documents/GitHub/leybl/www/Debug/BrowseInfo/pid.c.json	528c15a8a76755b2
+238	284	7946040045988193	C:/Users/vadychka/Documents/GitHub/leybl/www/Debug/BrowseInfo/sbus.c.json	360de1ab1f280d13
+284	325	7946040046457311	C:/Users/vadychka/Documents/GitHub/leybl/www/Debug/BrowseInfo/system_stm32g4xx.c.json	92415e6d51c726be
+325	335	7946040046769711	C:/Users/vadychka/Documents/GitHub/leybl/www/Debug/compile_commands.json	465a3bed609e78db

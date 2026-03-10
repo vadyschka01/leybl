@@ -1,8 +1,8 @@
 {
 	"arguments" : 
 	[
-		"C:\\IAR\\arm\\bin\\iccarm.exe",
-		"C:\\www\\system_stm32g4xx.c",
+		"C:\\iar\\ewarm-9.70.1\\arm\\bin\\iccarm.exe",
+		"C:\\Users\\vadychka\\Documents\\GitHub\\leybl\\www\\system_stm32g4xx.c",
 		"-nostdinc",
 		"-undef",
 		"-Wno-unaligned-access",
@@ -10,15 +10,15 @@
 		"-ferror-limit=0",
 		"-D__IAR_CLANGD__",
 		"-isystem",
-		"C:\\IAR\\arm\\inc\\c\\aarch32",
+		"C:\\iar\\ewarm-9.70.1\\arm\\inc\\c\\aarch32",
 		"-isystem",
-		"C:\\IAR\\arm\\inc",
+		"C:\\iar\\ewarm-9.70.1\\arm\\inc",
 		"-isystem",
-		"C:\\IAR\\arm\\inc\\c",
+		"C:\\iar\\ewarm-9.70.1\\arm\\inc\\c",
 		"-I",
-		"C:\\www\\",
+		"C:\\Users\\vadychka\\Documents\\GitHub\\leybl\\www\\",
 		"-I",
-		"C:\\IAR\\arm\\CMSIS\\Core\\Include\\",
+		"C:\\iar\\ewarm-9.70.1\\arm\\CMSIS\\Core\\Include\\",
 		"--target=armv7m-none-eabi",
 		"-D",
 		"__CHAR_BITS__=8",
@@ -963,7 +963,7 @@
 		"-x",
 		"c"
 	],
-	"directory" : "C:\\www",
-	"file" : "C:\\www\\system_stm32g4xx.c",
-	"output" : "C:\\www\\Debug\\Obj\\system_stm32g4xx.o"
+	"directory" : "C:\\Users\\vadychka\\Documents\\GitHub\\leybl\\www",
+	"file" : "C:\\Users\\vadychka\\Documents\\GitHub\\leybl\\www\\system_stm32g4xx.c",
+	"output" : "C:\\Users\\vadychka\\Documents\\GitHub\\leybl\\www\\Debug\\Obj\\system_stm32g4xx.o"
 }

@@ -55,7 +55,7 @@
     </Simulator>
     <PlDriver>
         <FirstRun>0</FirstRun>
-        <MemConfigValue>C:\IAR\arm\config\debugger\ST\STM32G431CB.ddf</MemConfigValue>
+        <MemConfigValue>C:\iar\ewarm-9.70.1\arm\config\debugger\ST\STM32G431CB.ddf</MemConfigValue>
     </PlDriver>
     <StLinkDriver>
         <stlinkserialNo>37FF71064E57343663691343</stlinkserialNo>
@@ -66,8 +66,8 @@
         <CStepIntDis>_ 0</CStepIntDis>
     </StLinkDriver>
     <ArmDriver>
-        <EnableCache>0</EnableCache>
         <EnforceMemoryConfiguration>1</EnforceMemoryConfiguration>
+        <EnableCache>0</EnableCache>
     </ArmDriver>
     <SWOTraceHWSettings>
         <OverrideDefaultClocks>0</OverrideDefaultClocks>

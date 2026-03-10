@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\IAR\common\bin\cspybat" -f "C:\www\settings\www.Debug.general.xcl" --backend -f "C:\www\settings\www.Debug.driver.xcl" 
+"C:\iar\ewarm-9.70.1\common\bin\cspybat" -f "C:\Users\vadychka\Documents\GitHub\leybl\www\settings\www.Debug.general.xcl" --backend -f "C:\Users\vadychka\Documents\GitHub\leybl\www\settings\www.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\IAR\common\bin\cspybat" -f "C:\www\settings\www.Debug.general.xcl" "--debug_file=%~1" --backend -f "C:\www\settings\www.Debug.driver.xcl" 
+"C:\iar\ewarm-9.70.1\common\bin\cspybat" -f "C:\Users\vadychka\Documents\GitHub\leybl\www\settings\www.Debug.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\vadychka\Documents\GitHub\leybl\www\settings\www.Debug.driver.xcl" 
 
 @echo off 
 :end
