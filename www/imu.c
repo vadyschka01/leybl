@@ -59,6 +59,7 @@ float pitch_acc = 0.0f;
 
 float roll_angle  = 0.0f;
 float pitch_angle = 0.0f;
+float yaw_angle = 0.0f;
 
 // ---------------- I2C + IMU INIT ----------------
 static void delay_long(int limit) {
