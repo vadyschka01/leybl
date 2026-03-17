@@ -360,7 +360,7 @@ void IMU_ReadAccel(void) {
  //----------------   
     
     // === COMPLEMENTARY FILTER ===
-    float alpha = 1.0f;
+    float alpha = 0.98f;
 
     roll_angle += gyro_roll_rate * dt; 
     pitch_angle += gyro_pitch_rate * dt;

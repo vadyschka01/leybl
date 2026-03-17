@@ -52,7 +52,7 @@ void PID_Update(void)
     float roll_angle_set  = (rc_channels[0] - 1024) * 0.05f;
     float pitch_angle_set = (rc_channels[1] - 1024) * 0.05f;
     float yaw_angle_set    = -(rc_channels[3] - 1024) * 0.5f;
-
+  
     // === 3. Ошибка по углам ===
     float roll_angle_error  = roll_angle_set  - roll_angle;
     float pitch_angle_error = pitch_angle_set - pitch_angle;
