@@ -42,6 +42,9 @@ typedef struct {
 static biquad_t accel_x_f, accel_y_f, accel_z_f;
 static biquad_t gyro_x_f,  gyro_y_f,  gyro_z_f;
 
+//------------для yaw 
+static float yaw_bias_comp = 0.0f;  // Компенсация дрейфа
+static uint32_t stable_counter = 0; // Счетчик стабильности
 
 // ---------------- bias ----------------
 float gyro_bias_x = 0.0f;
@@ -323,26 +326,49 @@ void IMU_ReadAccel(void) {
     gyro_pitch_rate =  -gx_raw / scale;
     gyro_yaw_rate   =  gz_raw / scale;
 
-
-   // if (roll_gyro > 60.0f)  roll_gyro = 60.0f;
-   // if (roll_gyro < -60.0f) roll_gyro = -60.0f;
-
-   // if (pitch_gyro > 60.0f)  pitch_gyro = 60.0f;
-   // if (pitch_gyro < -60.0f) pitch_gyro = -60.0f;
-
-
+//----------------
+    // === YAW BIAS COMPENSATION ==
+    // Если гироскоп почти не двигается → считаем что дрон стабилен
+    if (fabsf(gyro_yaw_rate) < 0.3f && 
+        fabsf(gyro_roll_rate) < 0.3f && 
+        fabsf(gyro_pitch_rate) < 0.3f) {
+        
+        stable_counter++;
+        
+        // После 2 секунд стабильности (200 циклов @ 100 Гц)
+        if (stable_counter > 200) {
+            // Медленно подстраиваем bias
+            // Коэффициент 0.0005 = время адаптации ~20 секунд
+            yaw_bias_comp += gyro_yaw_rate * 0.0005f;
+            
+            // Ограничим компенсацию (чтобы не ушло слишком далеко)
+            if (yaw_bias_comp > 0.5f) yaw_bias_comp = 0.5f;
+            if (yaw_bias_comp < -0.5f) yaw_bias_comp = -0.5f;
+        }
+    } else {
+        // Дрон двигается → сбрасываем счетчик
+        stable_counter = 0;
+    }
+    
+    // Применяем компенсацию
+    gyro_yaw_rate -= yaw_bias_comp;
+        
+    // Нормализация [-180, 180]
+    if (yaw_angle > 180.0f) yaw_angle -= 360.0f;
+    if (yaw_angle < -180.0f) yaw_angle += 360.0f;
+        
+ //----------------   
     
     // === COMPLEMENTARY FILTER ===
     float alpha = 1.0f;
 
     roll_angle += gyro_roll_rate * dt; 
     pitch_angle += gyro_pitch_rate * dt;
+    yaw_angle += gyro_yaw_rate *dt;
     
     roll_angle = alpha * roll_angle + (1.0f - alpha) * roll_acc;
     pitch_angle = alpha * pitch_angle + (1.0f - alpha) * pitch_acc;
 
-  //  roll_gyro = roll_angle;
-  //  pitch_gyro = pitch_angle;
 
 
 

@@ -17,6 +17,7 @@ extern float gyro_z;
 
 extern float pitch_angle;  // --- angle 
 extern float roll_angle;
+extern float yaw_angle;
 
 
 extern float gyro_roll_rate;

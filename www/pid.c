@@ -15,12 +15,13 @@ float pitch_rate = 0.0f;
 float yaw_rate = 0.0f;
 
 
+
 static float last_roll_error = 0.0f;  // для производной
 
 // Коэффициенты только для yaw (ось Z)
-static float pid_yaw_kp = 0.0f;   // 0.15
+static float pid_yaw_kp = 0.1f;   // 0.15
 static float pid_yaw_ki = 0.0f;
-static float pid_yaw_kd = 3.0f;  //0.17
+static float pid_yaw_kd = 0.2f;  //0.17
 
 // Коэффициенты только для roll (ось X)
 static float pid_roll_kp = 0.5f;   //0.09
@@ -50,19 +51,19 @@ void PID_Update(void)
     // === 2. Стики → желаемые углы ===
     float roll_angle_set  = (rc_channels[0] - 1024) * 0.05f;
     float pitch_angle_set = (rc_channels[1] - 1024) * 0.05f;
-    float yaw_angle_set    = (rc_channels[3] - 1024) * 0.5f;
+    float yaw_angle_set    = -(rc_channels[3] - 1024) * 0.5f;
 
     // === 3. Ошибка по углам ===
     float roll_angle_error  = roll_angle_set  - roll_angle;
     float pitch_angle_error = pitch_angle_set - pitch_angle;
-   // float yaw_angle_error = yaw_angle_set - yaw_angle;
+    float yaw_angle_error = yaw_angle_set - yaw_angle;
 
     // === 4. Внешний контур (ANGLE → RATE) ===
     float angle_kp = 3.0f;
 
     float roll_rate_set  = angle_kp * roll_angle_error;
     float pitch_rate_set = angle_kp * pitch_angle_error;
- //   float yaw_rate_set = angle_kp * yaw_angle_error;
+    float yaw_rate_set = angle_kp * yaw_angle_error;
 
     // === 5. Внутренний RATE PID ===
 
