@@ -1,0 +1,28 @@
+##IAR Ninja build file
+
+
+#Rules
+rule COMPDB_GEN
+  command = C$:\iar\ewarm-9.70.1\common\bin\ClangdCompDbGenerator.exe $gencommand -f "$rspfile_name"
+  description = Building $out...
+  rspfile = $rspfile_name
+  rspfile_content = $flags
+
+rule COMPDB_LINK
+  command = C$:\iar\ewarm-9.70.1\common\bin\ClangdCompDbLinker.exe -f "$rspfile_name"
+  description = Building $out...
+  rspfile = $rspfile_name
+  rspfile_content = $flags
+
+
+
+#Build steps
+build C$:\Users\vadychka\Documents\GitHub\leybl\fft\Debug\BrowseInfo\main.c.json : COMPDB_GEN 
+    flags = C$:\iar\ewarm-9.70.1\arm\bin\iccarm.exe C$:\Users\vadychka\Documents\GitHub\leybl\fft\main.c -o C$:\Users\vadychka\Documents\GitHub\leybl\fft\Debug\Obj\ --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling --debug --endian=little --cpu=Cortex-M3 --fpu=None --dlib_config C$:\iar\ewarm-9.70.1\arm\inc\c\DLib_Config_Normal.h -Ol -e
+    gencommand = -output_file C$:\Users\vadychka\Documents\GitHub\leybl\fft\Debug\BrowseInfo\main.c.json -icc_path C$:\iar\ewarm-9.70.1\arm\bin\iccarm.exe -source_file C$:\Users\vadychka\Documents\GitHub\leybl\fft\main.c -work_dir C$:\Users\vadychka\Documents\GitHub\leybl\fft -keyword_map_path C$:\iar\ewarm-9.70.1\common\config\ClangdConfig.json -object_file C$:\Users\vadychka\Documents\GitHub\leybl\fft\Debug\Obj\main.o
+    rspfile_name = C$:\Users\vadychka\Documents\GitHub\leybl\fft\Debug\BrowseInfo\main.c.json.rsp
+
+build C$:\Users\vadychka\Documents\GitHub\leybl\fft\Debug\compile_commands.json : COMPDB_LINK C$:\Users\vadychka\Documents\GitHub\leybl\fft\Debug\BrowseInfo\main.c.json
+    flags = -o C$:\Users\vadychka\Documents\GitHub\leybl\fft\Debug\compile_commands.json C$:\Users\vadychka\Documents\GitHub\leybl\fft\Debug\BrowseInfo\main.c.json
+    rspfile_name = C$:\Users\vadychka\Documents\GitHub\leybl\fft\Debug\compile_commands.json.rsp
+
