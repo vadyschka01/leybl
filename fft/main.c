@@ -28,38 +28,35 @@ void UART_SendPacket(LogPacket_t *p) {
 }
 
 // Настройка LPUART1 на скорость 921600 (для 1000 Гц это важно)
-void LPUART1_Log_Init(void)
-{
-    // 1. Включаем тактирование GPIOA и LPUART1
-    RCC->AHB2ENR  |= RCC_AHB2ENR_GPIOAEN;
+void LPUART1_Log_Init(void) {
+    // 1. Включаем тактирование портов и LPUART1
+    RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
     RCC->APB1ENR2 |= RCC_APB1ENR2_LPUART1EN;
 
-    // 2. Настройка ПИНОВ: PA2 (TX) и PA3 (RX)
-    // В SBUS у тебя был только PA3, тут добавляем PA2
-    GPIOA->MODER &= ~(GPIO_MODER_MODE2 | GPIO_MODER_MODE3);
-    GPIOA->MODER |=  (GPIO_MODER_MODE2_1 | GPIO_MODER_MODE3_1); // AF mode
-    
-    // AF12 для обоих пинов
-    GPIOA->AFR[0] &= ~((0xF << 8) | (0xF << 12));
-    GPIOA->AFR[0] |=  ((12 << 8) | (12 << 12));
-
-    // 3. Выбор источника тактирования (как в твоем sbus.c)
-    // 2 (0x10) - это HSI16 (16 МГц)
+    // 2. ЯВНО выбираем источник тактирования для LPUART1
+    // Выберем HSI (16 МГц), так как твой старый код работал именно на этой частоте.
+    // Это гарантирует, что даже если PLL (160 МГц) глючит, UART будет работать.
     RCC->CCIPR &= ~RCC_CCIPR_LPUART1SEL;
-    RCC->CCIPR |= (2 << RCC_CCIPR_LPUART1SEL_Pos); 
+    RCC->CCIPR |= (2 << RCC_CCIPR_LPUART1SEL_Pos); // 2: HSI16
 
-    // 4. Настройка параметров LPUART
+    // 3. Настройка пина PA2 (TX)
+    GPIOA->MODER &= ~(GPIO_MODER_MODE2);
+    GPIOA->MODER |=  GPIO_MODER_MODE2_1; // AF mode
+    GPIOA->AFR[0] &= ~(0xF << 8);
+    GPIOA->AFR[0] |=  (12 << 8); // AF12 = LPUART1_TX
+
+    // 4. Сброс настроек LPUART1
     LPUART1->CR1 = 0;
-    LPUART1->CR2 = 0; // ВАЖНО: Убираем инверсию и ставим 1 стоп-бит
+    LPUART1->CR2 = 0;
     LPUART1->CR3 = 0;
 
-    // Расчет скорости для HSI (16 МГц)
-    // Формула: BRR = (256 * 16,000,000) / 921,600 = 4444 (округлим)
-    LPUART1->BRR = 4444; 
+    // 5. Расчет BRR для 115200 при частоте 16 МГц (как в старом коде)
+    // Формула: 256 * 16 000 000 / 115 200 = 35555
+    LPUART1->BRR = 35555; 
 
-    // Включаем TE (передатчик), RE (приемник) и UE (модуль)
-    // БЕЗ чётности (PCE), чтобы компьютер понимал данные
-    LPUART1->CR1 |= USART_CR1_TE | USART_CR1_RE | USART_CR1_UE;
+    // 6. Включение
+    LPUART1->CR1 |= USART_CR1_TE; // Включаем передатчик
+    LPUART1->CR1 |= USART_CR1_UE; // Включаем модуль
 }
 
 // TIM6 на 1000 Гц
@@ -98,7 +95,16 @@ int main(void) {
     packet.header[0] = 0xAA;
     packet.header[1] = 0xBB;
 
+    
     while (1) {
+    const char *msg = "Hello STM32!\r\n";
+    while (*msg) {
+        while (!(LPUART1->ISR & USART_ISR_TXE));
+        LPUART1->TDR = *msg++;
+    }
+    for(volatile int i=0; i<1000000; i++); // Задержка
+
+    /*while (1) {
         if (imu_flag) {
             imu_flag = 0;
 
@@ -120,6 +126,6 @@ int main(void) {
 
             // 3. Плюем данные в UART
             UART_SendPacket(&packet);
-        }
+        } */
     }
 }
