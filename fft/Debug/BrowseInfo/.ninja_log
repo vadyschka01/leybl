@@ -1,3 +1,16 @@
 # ninja log v6
 0	47	7966502781999309	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/BrowseInfo/main.c.json	c2e88d1a9fd20db6
 47	53	7966502782467669	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/compile_commands.json	f2805c436342d4a3
+1	42	7966507870657602	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/BrowseInfo/main.c.json	c925cce127c442d1
+42	47	7966507871076259	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/compile_commands.json	f2805c436342d4a3
+1	51	7966515015512471	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/BrowseInfo/imu.c.json	c73736e68dde8d5b
+51	93	7966515016017145	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/BrowseInfo/system_stm32g4xx.c.json	df9acf2922317761
+93	100	7966515016435607	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/compile_commands.json	f9869b9765c84423
+1	43	7966515300826578	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/BrowseInfo/imu.c.json	6336a72b836fa331
+44	87	7966515301255203	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/BrowseInfo/main.c.json	ccafa4acf6c8efb6
+87	144	7966515301693686	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/BrowseInfo/system_stm32g4xx.c.json	32b0cc47dcdded7b
+145	155	7966515302271934	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/compile_commands.json	f9869b9765c84423
+1	45	7966604066593415	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/BrowseInfo/imu.c.json	9c35964d6486b4a1
+45	87	7966604067045493	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/BrowseInfo/main.c.json	f694af6a41bfdaa
+87	137	7966604067459479	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/BrowseInfo/system_stm32g4xx.c.json	a0b01bd5eafea8df
+137	145	7966604067962840	C:/Users/vadychka/Documents/GitHub/leybl/fft/Debug/compile_commands.json	f9869b9765c84423

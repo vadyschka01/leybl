@@ -1,10 +1,16 @@
 --endian=little
 
---cpu=Cortex-M3
+--cpu=Cortex-M4
 
---fpu=None
+--fpu=VFPv4_SP
+
+-p
+
+C:\iar\ewarm-9.70.1\arm\config\debugger\ST\STM32G431CB.ddf
 
 --semihosting
+
+--device=STM32G431CB
 
 --multicore_nr_of_cores=1
 

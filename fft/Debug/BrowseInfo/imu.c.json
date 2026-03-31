@@ -2,7 +2,7 @@
 	"arguments" : 
 	[
 		"C:\\iar\\ewarm-9.70.1\\arm\\bin\\iccarm.exe",
-		"C:\\Users\\vadychka\\Documents\\GitHub\\leybl\\fft\\main.c",
+		"C:\\Users\\vadychka\\Documents\\GitHub\\leybl\\fft\\imu.c",
 		"-nostdinc",
 		"-undef",
 		"-Wno-unaligned-access",
@@ -944,6 +944,6 @@
 		"c"
 	],
 	"directory" : "C:\\Users\\vadychka\\Documents\\GitHub\\leybl\\fft",
-	"file" : "C:\\Users\\vadychka\\Documents\\GitHub\\leybl\\fft\\main.c",
-	"output" : "C:\\Users\\vadychka\\Documents\\GitHub\\leybl\\fft\\Debug\\Obj\\main.o"
+	"file" : "C:\\Users\\vadychka\\Documents\\GitHub\\leybl\\fft\\imu.c",
+	"output" : "C:\\Users\\vadychka\\Documents\\GitHub\\leybl\\fft\\Debug\\Obj\\imu.o"
 }

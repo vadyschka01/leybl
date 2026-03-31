@@ -3422,6 +3422,27 @@
         </settings>
     </configuration>
     <file>
+        <name>$PROJ_DIR$\imu.c</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\imu.h</name>
+    </file>
+    <file>
         <name>$PROJ_DIR$\main.c</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\startup_stm32g431xx.s</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\stm32g431xx.h</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\stm32g4xx.h</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\system_stm32g4xx.c</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\system_stm32g4xx.h</name>
     </file>
 </project>
