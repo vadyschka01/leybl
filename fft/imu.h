@@ -11,12 +11,20 @@ typedef struct {
     float d1, d2;
 } biquad_t;
 
+
 // Глобальные сырые данные (для логгера)
 extern volatile int16_t raw_gx, raw_gy, raw_gz;
 extern volatile int16_t raw_ax, raw_ay, raw_az;
 
-// Отфильтрованные данные (в deg/sec и g)
+// Переменная для фильтрованного сигнала
 extern float filt_gx, filt_gy, filt_gz;
+
+// Структуры фильтров: Создаем набор для каждой оси
+static biquad_t notch_gx[3], lpf_gx;      // Фильтры для Gyro X (3 Notch + LPF)
+static biquad_t notch_gy[3], lpf_gy;      // Фильтры для Gyro Y
+static biquad_t notch_gz[3], lpf_gz;      // Фильтры для Gyro Z
+// Для акселерометра можно сделать аналогично, если нужно **
+
 
 // Функции
 void I2C1_Init(void);

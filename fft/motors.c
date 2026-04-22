@@ -22,14 +22,14 @@ void Motors_Init(void) {
     GPIOA->AFR[1] |=  ((6 << 8) | (11 << 12));
 
     // TIM2 — 100 Гц
-    TIM2->PSC = 160 - 1;
+    TIM2->PSC = 16 - 1;
     TIM2->ARR = 10000 - 1;
     TIM2->CCMR1 = 0x6060;
     TIM2->CCER  = 0x11;
     TIM2->CR1   = TIM_CR1_CEN;
 
     // TIM1 — 100 Гц
-    TIM1->PSC = 160 - 1;
+    TIM1->PSC = 16 - 1;
     TIM1->ARR = 10000 - 1;
     TIM1->CCMR2 = 0x6060;
     TIM1->CCER  = 0x1100;

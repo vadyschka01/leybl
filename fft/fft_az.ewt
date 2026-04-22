@@ -3431,6 +3431,12 @@
         <name>$PROJ_DIR$\main.c</name>
     </file>
     <file>
+        <name>$PROJ_DIR$\..\www\motors.c</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\..\www\motors.h</name>
+    </file>
+    <file>
         <name>$PROJ_DIR$\startup_stm32g431xx.s</name>
     </file>
     <file>
