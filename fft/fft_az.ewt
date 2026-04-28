@@ -3422,6 +3422,15 @@
         </settings>
     </configuration>
     <file>
+        <name>$EW_DIR$\arm\CMSIS\DSP\Include\arm_math.h</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\dsp_manager.c</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\dsp_manager.h</name>
+    </file>
+    <file>
         <name>$PROJ_DIR$\imu.c</name>
     </file>
     <file>
