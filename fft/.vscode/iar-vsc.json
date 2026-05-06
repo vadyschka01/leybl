@@ -1,0 +1,9 @@
+{
+  "workspaces": {
+    "${workspaceFolder}\\fft_az.eww": {
+      "configs": {
+        "${workspaceFolder}\\fft_az.ewp": "Debug"
+      }
+    }
+  }
+}

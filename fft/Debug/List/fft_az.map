@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ELF Linker V9.70.1.475/W64 for ARM                  28/Apr/2026  15:26:17
+# IAR ELF Linker V9.70.1.475/W64 for ARM                  06/May/2026  14:33:37
 # Copyright 2007-2025 IAR Systems AB.
 #
 #    Output file  =
@@ -79,7 +79,7 @@ No sections matched the following patterns:
   .intvec            ro code   0x800'0000          4     0x1d8  startup_stm32g431xx.o [1]
                              - 0x800'01d8                0x1d8
 
-"P1":                                                 0x1'fe28
+"P1":                                                 0x1'e868
   .rodata            const     0x800'01d8          4    0x8000  arm_common_tables.o [3]
   .rodata            const     0x800'81d8          4    0x4000  arm_common_tables.o [3]
   .rodata            const     0x800'c1d8          4    0x4000  arm_common_tables.o [3]
@@ -93,178 +93,156 @@ No sections matched the following patterns:
   .rodata            const     0x801'ad28          4     0x804  arm_common_tables.o [3]
   .rodata            const     0x801'b52c          4     0x800  arm_common_tables.o [3]
   .rodata            const     0x801'bd2c          4     0x800  arm_common_tables.o [3]
-  .text              ro code   0x801'c52c          4     0x704  arm_cfft_f32.o [3]
-  .text              ro code   0x801'cc30          4     0x592  arm_cfft_radix8_f32.o [3]
-  .text              ro code   0x801'd1c2          2      0x2a  copy_init3.o [5]
-  .text              ro code   0x801'd1ec          4      0x46  arm_bitreversal2.o [3]
-  .rodata            const     0x801'd234          4     0x400  arm_common_tables.o [3]
-  .rodata            const     0x801'd634          4     0x400  arm_common_tables.o [3]
-  .rodata            const     0x801'da34          4     0x380  arm_common_tables.o [3]
-  .rodata            const     0x801'ddb4          4     0x370  arm_common_tables.o [3]
-  .text              ro code   0x801'e124          4     0x360  imu.o [1]
-  .text              ro code   0x801'e484          4     0x214  cos_sin_tan_32.o [4]
-  .text              ro code   0x801'e698          4      0x1e  U64Shr.o [5]
-  .text              ro code   0x801'e6b8          4     0x248  main.o [1]
-  .text              ro code   0x801'e900          4     0x128  motors.o [1]
-  .text              ro code   0x801'ea28          4     0x1c0  dsp_manager.o [1]
-  .text              ro code   0x801'ebe8          4      0xa0  system_stm32g4xx.o [1]
-  .text              ro code   0x801'ec88          4     0x1bc  arm_rfft_fast_init_f32.o [3]
-  .text              ro code   0x801'ee44          4      0x90  arm_cos_f32.o [3]
-  .text              ro code   0x801'eed4          4     0x10e  arm_mult_f32.o [3]
-  .text              ro code   0x801'efe4          4     0x182  arm_rfft_fast_f32.o [3]
-  .text              ro code   0x801'f168          4     0x154  arm_cmplx_mag_f32.o [3]
-  .text              ro code   0x801'f2bc          4      0x98  arm_cfft_init_f32.o [3]
-  .rodata            const     0x801'f354          4     0x200  arm_common_tables.o [3]
-  .rodata            const     0x801'f554          4     0x200  arm_common_tables.o [3]
-  .rodata            const     0x801'f754          4     0x1a0  arm_common_tables.o [3]
-  .rodata            const     0x801'f8f4          4     0x100  arm_common_tables.o [3]
-  .rodata            const     0x801'f9f4          4     0x100  arm_common_tables.o [3]
-  .rodata            const     0x801'faf4          4      0x80  arm_common_tables.o [3]
-  .rodata            const     0x801'fb74          4      0x80  arm_common_tables.o [3]
-  .rodata            const     0x801'fbf4          4      0x70  arm_common_tables.o [3]
-  .rodata            const     0x801'fc64          4      0x60  arm_common_tables.o [3]
-  .text              ro code   0x801'fcc4          2      0x38  zero_init3.o [5]
-  .rodata            const     0x801'fcfc          4      0x28  arm_common_tables.o [3]
-  .text              ro code   0x801'fd24          4      0x28  data_init.o [5]
-  .text              ro code   0x801'fd4c          4      0x22  fpinit_M.o [4]
-  .text              ro code   0x801'fd70          4      0x22  cmain.o [5]
-  .text              ro code   0x801'fd92          2       0x4  low_level_init.o [2]
-  .text              ro code   0x801'fd96          2       0x4  exit.o [2]
-  .text              ro code   0x801'fd9c          4       0x4  cexit.o [5]
-  .text              ro code   0x801'fda0          4       0xa  cexit_2.o [5]
-  .text              ro code   0x801'fdac          4      0x14  exit.o [6]
-  .iar.init_table    const     0x801'fdc0          4      0x24  - Linker created -
-  .text              ro code   0x801'fde4          4      0x1e  cstartup_M.o [5]
-  .rodata            const     0x801'fe04          4      0x10  system_stm32g4xx.o [1]
-  .rodata            const     0x801'fe14          4      0x10  arm_const_structs.o [3]
-  .rodata            const     0x801'fe24          4      0x10  arm_const_structs.o [3]
-  .rodata            const     0x801'fe34          4      0x10  arm_const_structs.o [3]
-  .rodata            const     0x801'fe44          4      0x10  arm_const_structs.o [3]
-  .rodata            const     0x801'fe54          4      0x10  arm_const_structs.o [3]
-  .rodata            const     0x801'fe64          4      0x10  arm_const_structs.o [3]
-  .rodata            const     0x801'fe74          4      0x10  arm_const_structs.o [3]
-  .rodata            const     0x801'fe84          4      0x10  arm_const_structs.o [3]
-  .rodata            const     0x801'fe94          4      0x10  arm_const_structs.o [3]
-  .text              ro code   0x801'fea4          4      0x10  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'feb4          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'feb8          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'febc          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fec0          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fec4          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fec8          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fecc          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fed0          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fed4          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fed8          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fedc          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fee0          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fee4          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fee8          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'feec          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fef0          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fef4          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fef8          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'fefc          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff00          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff04          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff08          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff0c          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff10          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff14          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff18          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff1c          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff20          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff24          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff28          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff2c          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff30          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff34          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff38          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff3c          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff40          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff44          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff48          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff4c          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff50          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff54          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff58          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff5c          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff60          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff64          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff68          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff6c          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff70          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff74          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff78          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff7c          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff80          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff84          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff88          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff8c          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff90          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff94          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff98          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ff9c          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffa0          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffa4          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffa8          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffac          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffb0          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffb4          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffb8          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffbc          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffc0          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffc4          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffc8          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffcc          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffd0          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffd4          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffd8          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffdc          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffe0          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffe4          2       0x4  startup_stm32g431xx.o [1]
-  .text              ro code   0x801'ffe8          2       0x4  startup_stm32g431xx.o [1]
-  .rodata            const     0x801'ffec                  0x0  zero_init3.o [5]
-  .rodata            const     0x801'ffec                  0x0  copy_init3.o [5]
-  Initializer bytes  const     0x801'ffec          4      0x14  <for P3 s0>
-                             - 0x802'0000             0x1'fe28
+  .rodata            const     0x801'c52c          4     0x400  arm_common_tables.o [3]
+  .rodata            const     0x801'c92c          4     0x400  arm_common_tables.o [3]
+  .rodata            const     0x801'cd2c          4     0x380  arm_common_tables.o [3]
+  .rodata            const     0x801'd0ac          4     0x370  arm_common_tables.o [3]
+  .text              ro code   0x801'd41c          4     0x304  imu.o [1]
+  .rodata            const     0x801'd720          4     0x200  arm_common_tables.o [3]
+  .rodata            const     0x801'd920          4     0x200  arm_common_tables.o [3]
+  .text              ro code   0x801'db20          4     0x1bc  arm_rfft_fast_init_f32.o [3]
+  .text              ro code   0x801'dcdc          4      0x98  arm_cfft_init_f32.o [3]
+  .text              ro code   0x801'dd74          4     0x1b0  main.o [1]
+  .text              ro code   0x801'df24          4      0xc8  motors.o [1]
+  .text              ro code   0x801'dfec          4      0x5c  dsp_manager.o [1]
+  .text              ro code   0x801'e048          4      0x9c  system_stm32g4xx.o [1]
+  .text              ro code   0x801'e0e4          4      0x90  arm_cos_f32.o [3]
+  .rodata            const     0x801'e174          4     0x1a0  arm_common_tables.o [3]
+  .rodata            const     0x801'e314          4     0x100  arm_common_tables.o [3]
+  .rodata            const     0x801'e414          4     0x100  arm_common_tables.o [3]
+  .rodata            const     0x801'e514          4      0x80  arm_common_tables.o [3]
+  .rodata            const     0x801'e594          4      0x80  arm_common_tables.o [3]
+  .rodata            const     0x801'e614          4      0x70  arm_common_tables.o [3]
+  .rodata            const     0x801'e684          4      0x60  arm_common_tables.o [3]
+  .text              ro code   0x801'e6e4          2      0x38  zero_init3.o [5]
+  .text              ro code   0x801'e71c          2      0x2a  copy_init3.o [5]
+  .rodata            const     0x801'e748          4      0x28  arm_common_tables.o [3]
+  .text              ro code   0x801'e770          4      0x28  data_init.o [5]
+  .text              ro code   0x801'e798          4      0x22  fpinit_M.o [4]
+  .text              ro code   0x801'e7bc          4      0x22  cmain.o [5]
+  .text              ro code   0x801'e7de          2       0x4  low_level_init.o [2]
+  .text              ro code   0x801'e7e2          2       0x4  exit.o [2]
+  .text              ro code   0x801'e7e8          4       0x4  cexit.o [5]
+  .text              ro code   0x801'e7ec          4       0xa  cexit_2.o [5]
+  .text              ro code   0x801'e7f8          4      0x14  exit.o [6]
+  .iar.init_table    const     0x801'e80c          4      0x24  - Linker created -
+  .text              ro code   0x801'e830          4      0x1e  cstartup_M.o [5]
+  .rodata            const     0x801'e850          4      0x10  arm_const_structs.o [3]
+  .rodata            const     0x801'e860          4      0x10  arm_const_structs.o [3]
+  .rodata            const     0x801'e870          4      0x10  arm_const_structs.o [3]
+  .rodata            const     0x801'e880          4      0x10  arm_const_structs.o [3]
+  .rodata            const     0x801'e890          4      0x10  arm_const_structs.o [3]
+  .rodata            const     0x801'e8a0          4      0x10  arm_const_structs.o [3]
+  .rodata            const     0x801'e8b0          4      0x10  arm_const_structs.o [3]
+  .rodata            const     0x801'e8c0          4      0x10  arm_const_structs.o [3]
+  .rodata            const     0x801'e8d0          4      0x10  arm_const_structs.o [3]
+  .text              ro code   0x801'e8e0          4      0x10  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e8f0          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e8f4          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e8f8          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e8fc          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e900          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e904          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e908          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e90c          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e910          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e914          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e918          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e91c          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e920          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e924          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e928          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e92c          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e930          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e934          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e938          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e93c          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e940          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e944          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e948          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e94c          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e950          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e954          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e958          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e95c          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e960          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e964          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e968          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e96c          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e970          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e974          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e978          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e97c          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e980          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e984          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e988          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e98c          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e990          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e994          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e998          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e99c          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9a0          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9a4          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9a8          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9ac          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9b0          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9b4          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9b8          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9bc          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9c0          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9c4          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9c8          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9cc          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9d0          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9d4          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9d8          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9dc          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9e0          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9e4          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9e8          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9ec          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9f0          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9f4          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9f8          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'e9fc          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'ea00          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'ea04          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'ea08          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'ea0c          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'ea10          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'ea14          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'ea18          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'ea1c          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'ea20          2       0x4  startup_stm32g431xx.o [1]
+  .text              ro code   0x801'ea24          2       0x4  startup_stm32g431xx.o [1]
+  .rodata            const     0x801'ea28                  0x0  zero_init3.o [5]
+  .rodata            const     0x801'ea28                  0x0  copy_init3.o [5]
+  Initializer bytes  const     0x801'ea28          4      0x18  <for P3 s0>
+                             - 0x801'ea40             0x1'e868
 
-"P3", part 1 of 3:                                        0x14
-  P3 s0                       0x2000'0000                 0x14  <Init block>
-    .data            inited   0x2000'0000          4       0x4  main.o [1]
-    .data            inited   0x2000'0004          4       0x4  main.o [1]
-    .data            inited   0x2000'0008          4       0x4  main.o [1]
-    .data            inited   0x2000'000c          4       0x4  main.o [1]
-    .data            inited   0x2000'0010          4       0x4  system_stm32g4xx.o [1]
-                            - 0x2000'0014                 0x14
+"P3", part 1 of 3:                                        0x18
+  P3 s0                       0x2000'0000                 0x18  <Init block>
+    .data            inited   0x2000'0000          4      0x14  main.o [1]
+    .data            inited   0x2000'0014          4       0x4  system_stm32g4xx.o [1]
+                            - 0x2000'0018                 0x18
 
-"P3", part 2 of 3:                                      0x1c7c
-  .bss               zero     0x2000'0014          4     0x800  dsp_manager.o [1]
-  .bss               zero     0x2000'0814          4     0x800  dsp_manager.o [1]
-  .bss               zero     0x2000'1014          4     0x800  dsp_manager.o [1]
-  .bss               zero     0x2000'1814          4     0x400  dsp_manager.o [1]
-  .bss               zero     0x2000'1c14          4      0x1c  imu.o [1]
-  .bss               zero     0x2000'1c30          4      0x1c  imu.o [1]
-  .bss               zero     0x2000'1c4c          4      0x1c  imu.o [1]
-  .bss               zero     0x2000'1c68          4      0x18  dsp_manager.o [1]
-  .bss               zero     0x2000'1c80          4       0x4  imu.o [1]
-  .bss               zero     0x2000'1c84          4       0x4  imu.o [1]
-  .bss               zero     0x2000'1c88          2       0x2  dsp_manager.o [1]
-  .bss               zero     0x2000'1c8a          2       0x2  imu.o [1]
-  .bss               zero     0x2000'1c8c                  0x1  dsp_manager.o [1]
-  .bss               zero     0x2000'1c8d                  0x1  main.o [1]
-                            - 0x2000'1c8e               0x1c7a
+"P3", part 2 of 3:                                       0x860
+  .bss               zero     0x2000'0018          4     0x81c  dsp_manager.o [1]
+  .bss               zero     0x2000'0834          4      0x38  imu.o [1]
+  .bss               zero     0x2000'086c          4       0xc  imu.o [1]
+                            - 0x2000'0878                0x860
 
 "P3", part 3 of 3:                                       0x800
-  CSTACK                      0x2000'1c90          8     0x800  <Block>
-    CSTACK           uninit   0x2000'1c90                0x800  <Block tail>
-                            - 0x2000'2490                0x800
+  CSTACK                      0x2000'0878          8     0x800  <Block>
+    CSTACK           uninit   0x2000'0878                0x800  <Block tail>
+                            - 0x2000'1078                0x800
 
 Unused ranges:
 
          From           To    Size
          ----           --    ----
-  0x2000'2490  0x2000'3fff  0x1b70
+   0x801'ea40   0x801'ffff  0x15c0
+  0x2000'1078  0x2000'3fff  0x2f88
   0x2000'4000  0x2000'57ff  0x1800
 
 
@@ -275,14 +253,14 @@ Unused ranges:
           Address      Size
           -------      ----
 Zero (__iar_zero_init3)
-    1 destination range, total size 0x1c7a:
-          0x2000'0014  0x1c7a
+    1 destination range, total size 0x860:
+          0x2000'0018  0x860
 
 Copy (__iar_copy_init3)
-    1 source range, total size 0x14:
-           0x801'ffec    0x14
-    1 destination range, total size 0x14:
-          0x2000'0000    0x14
+    1 source range, total size 0x18:
+           0x801'ea28   0x18
+    1 destination range, total size 0x18:
+          0x2000'0000   0x18
 
 
 
@@ -297,14 +275,14 @@ command line/config:
     Total:
 
 C:\Users\vadychka\Documents\GitHub\leybl\fft\Debug\Obj: [1]
-    dsp_manager.o                 448             7'195
-    imu.o                         864                94
-    main.o                        584       16       17
-    motors.o                      296
+    dsp_manager.o                  92             2'076
+    imu.o                         772                68
+    main.o                        432       20       20
+    motors.o                      200
     startup_stm32g431xx.o         800
-    system_stm32g4xx.o            160       20        4
+    system_stm32g4xx.o            156        4        4
     ---------------------------------------------------
-    Total:                      3'152       36    7'310
+    Total:                      2'452       24    2'168
 
 dl7M_tln.a: [2]
     exit.o                          4
@@ -313,28 +291,20 @@ dl7M_tln.a: [2]
     Total:                          8
 
 iar_cortexM4lf_math.a: [3]
-    arm_bitreversal2.o             70
-    arm_cfft_f32.o              1'796
     arm_cfft_init_f32.o           152
-    arm_cfft_radix8_f32.o       1'426
-    arm_cmplx_mag_f32.o           340
     arm_common_tables.o                121'820
     arm_const_structs.o                    144
     arm_cos_f32.o                 144
-    arm_mult_f32.o                270
-    arm_rfft_fast_f32.o           386
     arm_rfft_fast_init_f32.o      444
     ---------------------------------------------------
-    Total:                      5'028  121'964
+    Total:                        740  121'964
 
 m7M_tls.a: [4]
-    cos_sin_tan_32.o              532
     fpinit_M.o                     34
     ---------------------------------------------------
-    Total:                        566
+    Total:                         34
 
 rt7M_tl.a: [5]
-    U64Shr.o                       30
     cexit.o                         4
     cexit_2.o                      10
     cmain.o                        34
@@ -343,17 +313,17 @@ rt7M_tl.a: [5]
     data_init.o                    40
     zero_init3.o                   56
     ---------------------------------------------------
-    Total:                        246
+    Total:                        216
 
 shb_l.a: [6]
     exit.o                         20
     ---------------------------------------------------
     Total:                         20
 
-    Gaps                           12        4
+    Gaps                            6        4
     Linker created                          36    2'048
 -------------------------------------------------------
-    Grand Total:                9'032  122'040    9'358
+    Grand Total:                3'476  122'028    4'216
 
 
 *******************************************************************************
@@ -362,258 +332,222 @@ shb_l.a: [6]
 
 Entry                       Address    Size  Type      Object
 -----                       -------    ----  ----      ------
-.iar.init_table$$Base    0x801'fdc0           --   Gb  - Linker created -
-.iar.init_table$$Limit   0x801'fde4           --   Gb  - Linker created -
-?main                    0x801'fd71          Code  Gb  cmain.o [5]
-ADC1_2_IRQHandler        0x801'ff1d          Code  Wk  startup_stm32g431xx.o [1]
-AHBPrescTable            0x801'fe04    0x10  Data  Gb  system_stm32g4xx.o [1]
-BusFault_Handler         0x801'fec1          Code  Wk  startup_stm32g431xx.o [1]
-By2Pi                    0x801'e67c    0x1c  Data  Lc  cos_sin_tan_32.o [4]
-COMP1_2_3_IRQHandler     0x801'ffb9          Code  Wk  startup_stm32g431xx.o [1]
-COMP4_IRQHandler         0x801'ffbd          Code  Wk  startup_stm32g431xx.o [1]
-CORDIC_IRQHandler        0x801'ffe5          Code  Wk  startup_stm32g431xx.o [1]
-CRS_IRQHandler           0x801'ffc1          Code  Wk  startup_stm32g431xx.o [1]
-CSTACK$$Base            0x2000'1c90           --   Gb  - Linker created -
-CSTACK$$Limit           0x2000'2490           --   Gb  - Linker created -
+.iar.init_table$$Base    0x801'e80c           --   Gb  - Linker created -
+.iar.init_table$$Limit   0x801'e830           --   Gb  - Linker created -
+?main                    0x801'e7bd          Code  Gb  cmain.o [5]
+ADC1_2_IRQHandler        0x801'e959          Code  Wk  startup_stm32g431xx.o [1]
+AHBPrescTable            0x801'e0d4    0x10  Data  Gb  system_stm32g4xx.o [1]
+BusFault_Handler         0x801'e8fd          Code  Wk  startup_stm32g431xx.o [1]
+COMP1_2_3_IRQHandler     0x801'e9f5          Code  Wk  startup_stm32g431xx.o [1]
+COMP4_IRQHandler         0x801'e9f9          Code  Wk  startup_stm32g431xx.o [1]
+CORDIC_IRQHandler        0x801'ea21          Code  Wk  startup_stm32g431xx.o [1]
+CRS_IRQHandler           0x801'e9fd          Code  Wk  startup_stm32g431xx.o [1]
+CSTACK$$Base            0x2000'0878           --   Gb  - Linker created -
+CSTACK$$Limit           0x2000'1078           --   Gb  - Linker created -
 DMA1_Channel1_IRQHandler
-                         0x801'ff05          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e941          Code  Wk  startup_stm32g431xx.o [1]
 DMA1_Channel2_IRQHandler
-                         0x801'ff09          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e945          Code  Wk  startup_stm32g431xx.o [1]
 DMA1_Channel3_IRQHandler
-                         0x801'ff0d          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e949          Code  Wk  startup_stm32g431xx.o [1]
 DMA1_Channel4_IRQHandler
-                         0x801'ff11          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e94d          Code  Wk  startup_stm32g431xx.o [1]
 DMA1_Channel5_IRQHandler
-                         0x801'ff15          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e951          Code  Wk  startup_stm32g431xx.o [1]
 DMA1_Channel6_IRQHandler
-                         0x801'ff19          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e955          Code  Wk  startup_stm32g431xx.o [1]
 DMA2_Channel1_IRQHandler
-                         0x801'ffa1          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e9dd          Code  Wk  startup_stm32g431xx.o [1]
 DMA2_Channel2_IRQHandler
-                         0x801'ffa5          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e9e1          Code  Wk  startup_stm32g431xx.o [1]
 DMA2_Channel3_IRQHandler
-                         0x801'ffa9          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e9e5          Code  Wk  startup_stm32g431xx.o [1]
 DMA2_Channel4_IRQHandler
-                         0x801'ffad          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e9e9          Code  Wk  startup_stm32g431xx.o [1]
 DMA2_Channel5_IRQHandler
-                         0x801'ffb1          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e9ed          Code  Wk  startup_stm32g431xx.o [1]
 DMA2_Channel6_IRQHandler
-                         0x801'ffe1          Code  Wk  startup_stm32g431xx.o [1]
-DMAMUX_OVR_IRQHandler    0x801'ffdd          Code  Wk  startup_stm32g431xx.o [1]
-DSP_AddSample            0x801'ea79    0x2e  Code  Gb  dsp_manager.o [1]
-DSP_Init                 0x801'ea29    0x50  Code  Gb  dsp_manager.o [1]
-DSP_Process              0x801'eaa9   0x108  Code  Gb  dsp_manager.o [1]
-DebugMon_Handler         0x801'fecd          Code  Wk  startup_stm32g431xx.o [1]
-EXTI0_IRQHandler         0x801'fef1          Code  Wk  startup_stm32g431xx.o [1]
-EXTI15_10_IRQHandler     0x801'ff75          Code  Wk  startup_stm32g431xx.o [1]
-EXTI1_IRQHandler         0x801'fef5          Code  Wk  startup_stm32g431xx.o [1]
-EXTI2_IRQHandler         0x801'fef9          Code  Wk  startup_stm32g431xx.o [1]
-EXTI3_IRQHandler         0x801'fefd          Code  Wk  startup_stm32g431xx.o [1]
-EXTI4_IRQHandler         0x801'ff01          Code  Wk  startup_stm32g431xx.o [1]
-EXTI9_5_IRQHandler       0x801'ff31          Code  Wk  startup_stm32g431xx.o [1]
-FDCAN1_IT0_IRQHandler    0x801'ff29          Code  Wk  startup_stm32g431xx.o [1]
-FDCAN1_IT1_IRQHandler    0x801'ff2d          Code  Wk  startup_stm32g431xx.o [1]
-FLASH_IRQHandler         0x801'fee9          Code  Wk  startup_stm32g431xx.o [1]
-FMAC_IRQHandler          0x801'ffe9          Code  Wk  startup_stm32g431xx.o [1]
-FPU_IRQHandler           0x801'ffc9          Code  Wk  startup_stm32g431xx.o [1]
-HardFault_Handler        0x801'feb9          Code  Wk  startup_stm32g431xx.o [1]
-I2C1_ER_IRQHandler       0x801'ff55          Code  Wk  startup_stm32g431xx.o [1]
-I2C1_EV_IRQHandler       0x801'ff51          Code  Wk  startup_stm32g431xx.o [1]
-I2C1_Init                0x801'e1f7    0x56  Code  Gb  imu.o [1]
-I2C2_ER_IRQHandler       0x801'ff5d          Code  Wk  startup_stm32g431xx.o [1]
-I2C2_EV_IRQHandler       0x801'ff59          Code  Wk  startup_stm32g431xx.o [1]
-I2C3_ER_IRQHandler       0x801'ffd9          Code  Wk  startup_stm32g431xx.o [1]
-I2C3_EV_IRQHandler       0x801'ffd5          Code  Wk  startup_stm32g431xx.o [1]
-I2C_ReadMulti            0x801'e24d    0x5c  Code  Gb  imu.o [1]
-IMU_Calibrate            0x801'e375    0x5c  Code  Gb  imu.o [1]
-IMU_Init                 0x801'e2ed    0x88  Code  Gb  imu.o [1]
-IMU_ReadRawData          0x801'e3d1    0x50  Code  Gb  imu.o [1]
-IMU_SetBank              0x801'e2d9    0x12  Code  Gb  imu.o [1]
-IMU_WriteReg             0x801'e2a9    0x30  Code  Lc  imu.o [1]
-LPTIM1_IRQHandler        0x801'ff91          Code  Wk  startup_stm32g431xx.o [1]
-LPUART1_IRQHandler       0x801'ffd1          Code  Wk  startup_stm32g431xx.o [1]
-MemManage_Handler        0x801'febd          Code  Wk  startup_stm32g431xx.o [1]
-Motors_Init              0x801'e901    0xb2  Code  Gb  motors.o [1]
-NMI_Handler              0x801'feb5          Code  Wk  startup_stm32g431xx.o [1]
-PVD_PVM_IRQHandler       0x801'fedd          Code  Wk  startup_stm32g431xx.o [1]
-PendSV_Handler           0x801'fed1          Code  Wk  startup_stm32g431xx.o [1]
-RCC_IRQHandler           0x801'feed          Code  Wk  startup_stm32g431xx.o [1]
-RNG_IRQHandler           0x801'ffcd          Code  Wk  startup_stm32g431xx.o [1]
-RTC_Alarm_IRQHandler     0x801'ff79          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'ea1d          Code  Wk  startup_stm32g431xx.o [1]
+DMAMUX_OVR_IRQHandler    0x801'ea19          Code  Wk  startup_stm32g431xx.o [1]
+DSP_Init                 0x801'dfed    0x50  Code  Gb  dsp_manager.o [1]
+DebugMon_Handler         0x801'e909          Code  Wk  startup_stm32g431xx.o [1]
+EXTI0_IRQHandler         0x801'e92d          Code  Wk  startup_stm32g431xx.o [1]
+EXTI15_10_IRQHandler     0x801'e9b1          Code  Wk  startup_stm32g431xx.o [1]
+EXTI1_IRQHandler         0x801'e931          Code  Wk  startup_stm32g431xx.o [1]
+EXTI2_IRQHandler         0x801'e935          Code  Wk  startup_stm32g431xx.o [1]
+EXTI3_IRQHandler         0x801'e939          Code  Wk  startup_stm32g431xx.o [1]
+EXTI4_IRQHandler         0x801'e93d          Code  Wk  startup_stm32g431xx.o [1]
+EXTI9_5_IRQHandler       0x801'e96d          Code  Wk  startup_stm32g431xx.o [1]
+FDCAN1_IT0_IRQHandler    0x801'e965          Code  Wk  startup_stm32g431xx.o [1]
+FDCAN1_IT1_IRQHandler    0x801'e969          Code  Wk  startup_stm32g431xx.o [1]
+FLASH_IRQHandler         0x801'e925          Code  Wk  startup_stm32g431xx.o [1]
+FMAC_IRQHandler          0x801'ea25          Code  Wk  startup_stm32g431xx.o [1]
+FMAC_Init                0x801'd41d    0x4a  Code  Gb  imu.o [1]
+FMAC_Process_Sample      0x801'd6ad    0x3e  Code  Gb  imu.o [1]
+FMAC_Step                0x801'd61d    0x90  Code  Lc  imu.o [1]
+FPU_IRQHandler           0x801'ea05          Code  Wk  startup_stm32g431xx.o [1]
+HardFault_Handler        0x801'e8f5          Code  Wk  startup_stm32g431xx.o [1]
+I2C1_ER_IRQHandler       0x801'e991          Code  Wk  startup_stm32g431xx.o [1]
+I2C1_EV_IRQHandler       0x801'e98d          Code  Wk  startup_stm32g431xx.o [1]
+I2C1_Init                0x801'd467    0x4c  Code  Gb  imu.o [1]
+I2C2_ER_IRQHandler       0x801'e999          Code  Wk  startup_stm32g431xx.o [1]
+I2C2_EV_IRQHandler       0x801'e995          Code  Wk  startup_stm32g431xx.o [1]
+I2C3_ER_IRQHandler       0x801'ea15          Code  Wk  startup_stm32g431xx.o [1]
+I2C3_EV_IRQHandler       0x801'ea11          Code  Wk  startup_stm32g431xx.o [1]
+I2C_ReadMulti            0x801'd4b3    0x40  Code  Gb  imu.o [1]
+IMU_Calibrate            0x801'd593    0x4c  Code  Gb  imu.o [1]
+IMU_Init                 0x801'd525    0x6e  Code  Gb  imu.o [1]
+IMU_ReadRawData          0x801'd5df    0x3c  Code  Gb  imu.o [1]
+IMU_SetBank              0x801'd51b     0xa  Code  Gb  imu.o [1]
+IMU_WriteReg             0x801'd4f3    0x28  Code  Lc  imu.o [1]
+LPTIM1_IRQHandler        0x801'e9cd          Code  Wk  startup_stm32g431xx.o [1]
+LPUART1_IRQHandler       0x801'ea0d          Code  Wk  startup_stm32g431xx.o [1]
+MemManage_Handler        0x801'e8f9          Code  Wk  startup_stm32g431xx.o [1]
+Motors_Init              0x801'df25    0x9a  Code  Gb  motors.o [1]
+NMI_Handler              0x801'e8f1          Code  Wk  startup_stm32g431xx.o [1]
+PVD_PVM_IRQHandler       0x801'e919          Code  Wk  startup_stm32g431xx.o [1]
+PendSV_Handler           0x801'e90d          Code  Wk  startup_stm32g431xx.o [1]
+RCC_IRQHandler           0x801'e929          Code  Wk  startup_stm32g431xx.o [1]
+RNG_IRQHandler           0x801'ea09          Code  Wk  startup_stm32g431xx.o [1]
+RTC_Alarm_IRQHandler     0x801'e9b5          Code  Wk  startup_stm32g431xx.o [1]
 RTC_TAMP_LSECSS_IRQHandler
-                         0x801'fee1          Code  Wk  startup_stm32g431xx.o [1]
-RTC_WKUP_IRQHandler      0x801'fee5          Code  Wk  startup_stm32g431xx.o [1]
-Region$$Table$$Base      0x801'fdc0           --   Gb  - Linker created -
-Region$$Table$$Limit     0x801'fde4           --   Gb  - Linker created -
-Reset_Handler            0x801'fea5          Code  Wk  startup_stm32g431xx.o [1]
-SAI1_IRQHandler          0x801'ffc5          Code  Wk  startup_stm32g431xx.o [1]
-SPI1_IRQHandler          0x801'ff61          Code  Wk  startup_stm32g431xx.o [1]
-SPI2_IRQHandler          0x801'ff65          Code  Wk  startup_stm32g431xx.o [1]
-SPI3_IRQHandler          0x801'ff95          Code  Wk  startup_stm32g431xx.o [1]
-SVC_Handler              0x801'fec9          Code  Wk  startup_stm32g431xx.o [1]
-Set_Motor_Individual     0x801'e9c5    0x16  Code  Gb  motors.o [1]
-Set_Motors               0x801'e9b3    0x12  Code  Gb  motors.o [1]
-SysTick_Handler          0x801'fed5          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e91d          Code  Wk  startup_stm32g431xx.o [1]
+RTC_WKUP_IRQHandler      0x801'e921          Code  Wk  startup_stm32g431xx.o [1]
+Region$$Table$$Base      0x801'e80c           --   Gb  - Linker created -
+Region$$Table$$Limit     0x801'e830           --   Gb  - Linker created -
+Reset_Handler            0x801'e8e1          Code  Wk  startup_stm32g431xx.o [1]
+SAI1_IRQHandler          0x801'ea01          Code  Wk  startup_stm32g431xx.o [1]
+SPI1_IRQHandler          0x801'e99d          Code  Wk  startup_stm32g431xx.o [1]
+SPI2_IRQHandler          0x801'e9a1          Code  Wk  startup_stm32g431xx.o [1]
+SPI3_IRQHandler          0x801'e9d1          Code  Wk  startup_stm32g431xx.o [1]
+SVC_Handler              0x801'e905          Code  Wk  startup_stm32g431xx.o [1]
+Set_Motor_Individual     0x801'dfcd    0x10  Code  Gb  motors.o [1]
+Set_Motors               0x801'dfbf     0xe  Code  Gb  motors.o [1]
+SysTick_Handler          0x801'e911          Code  Wk  startup_stm32g431xx.o [1]
 SystemClock_Config_160MHz
-                         0x801'e77f    0x54  Code  Gb  main.o [1]
-SystemCoreClock         0x2000'0010     0x4  Data  Gb  system_stm32g4xx.o [1]
-SystemCoreClockUpdate    0x801'ebf5    0x78  Code  Gb  system_stm32g4xx.o [1]
-SystemInit               0x801'ebe9     0xc  Code  Gb  system_stm32g4xx.o [1]
+                         0x801'ddf7    0x4c  Code  Gb  main.o [1]
+SystemCoreClock         0x2000'0014     0x4  Data  Gb  system_stm32g4xx.o [1]
+SystemCoreClockUpdate    0x801'e055    0x6c  Code  Gb  system_stm32g4xx.o [1]
+SystemInit               0x801'e049     0xc  Code  Gb  system_stm32g4xx.o [1]
 TIM1_BRK_TIM15_IRQHandler
-                         0x801'ff35          Code  Wk  startup_stm32g431xx.o [1]
-TIM1_CC_IRQHandler       0x801'ff41          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e971          Code  Wk  startup_stm32g431xx.o [1]
+TIM1_CC_IRQHandler       0x801'e97d          Code  Wk  startup_stm32g431xx.o [1]
 TIM1_TRG_COM_TIM17_IRQHandler
-                         0x801'ff3d          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e979          Code  Wk  startup_stm32g431xx.o [1]
 TIM1_UP_TIM16_IRQHandler
-                         0x801'ff39          Code  Wk  startup_stm32g431xx.o [1]
-TIM2_IRQHandler          0x801'ff45          Code  Wk  startup_stm32g431xx.o [1]
-TIM3_IRQHandler          0x801'ff49          Code  Wk  startup_stm32g431xx.o [1]
-TIM4_IRQHandler          0x801'ff4d          Code  Wk  startup_stm32g431xx.o [1]
-TIM6_DAC_IRQHandler      0x801'e87b    0x14  Code  Gb  main.o [1]
-TIM6_Init_1000Hz         0x801'e845    0x36  Code  Gb  main.o [1]
-TIM7_IRQHandler          0x801'ff9d          Code  Wk  startup_stm32g431xx.o [1]
-TIM8_BRK_IRQHandler      0x801'ff81          Code  Wk  startup_stm32g431xx.o [1]
-TIM8_CC_IRQHandler       0x801'ff8d          Code  Wk  startup_stm32g431xx.o [1]
+                         0x801'e975          Code  Wk  startup_stm32g431xx.o [1]
+TIM2_IRQHandler          0x801'e981          Code  Wk  startup_stm32g431xx.o [1]
+TIM3_IRQHandler          0x801'e985          Code  Wk  startup_stm32g431xx.o [1]
+TIM4_IRQHandler          0x801'e989          Code  Wk  startup_stm32g431xx.o [1]
+TIM6_DAC_IRQHandler      0x801'ded9    0x14  Code  Gb  main.o [1]
+TIM6_Init_1000Hz         0x801'dea9    0x30  Code  Gb  main.o [1]
+TIM7_IRQHandler          0x801'e9d9          Code  Wk  startup_stm32g431xx.o [1]
+TIM8_BRK_IRQHandler      0x801'e9bd          Code  Wk  startup_stm32g431xx.o [1]
+TIM8_CC_IRQHandler       0x801'e9c9          Code  Wk  startup_stm32g431xx.o [1]
 TIM8_TRG_COM_IRQHandler
-                         0x801'ff89          Code  Wk  startup_stm32g431xx.o [1]
-TIM8_UP_IRQHandler       0x801'ff85          Code  Wk  startup_stm32g431xx.o [1]
-UART2_Init_921600        0x801'e7d3    0x50  Code  Gb  main.o [1]
-UART4_IRQHandler         0x801'ff99          Code  Wk  startup_stm32g431xx.o [1]
-UART_SendPacket          0x801'e823    0x22  Code  Gb  main.o [1]
-UCPD1_IRQHandler         0x801'ffb5          Code  Wk  startup_stm32g431xx.o [1]
-USART1_IRQHandler        0x801'ff69          Code  Wk  startup_stm32g431xx.o [1]
-USART2_IRQHandler        0x801'ff6d          Code  Wk  startup_stm32g431xx.o [1]
-USART3_IRQHandler        0x801'ff71          Code  Wk  startup_stm32g431xx.o [1]
-USBWakeUp_IRQHandler     0x801'ff7d          Code  Wk  startup_stm32g431xx.o [1]
-USB_HP_IRQHandler        0x801'ff21          Code  Wk  startup_stm32g431xx.o [1]
-USB_LP_IRQHandler        0x801'ff25          Code  Wk  startup_stm32g431xx.o [1]
-UsageFault_Handler       0x801'fec5          Code  Wk  startup_stm32g431xx.o [1]
-WWDG_IRQHandler          0x801'fed9          Code  Wk  startup_stm32g431xx.o [1]
-__NVIC_EnableIRQ         0x801'e6b9    0x1c  Code  Lc  main.o [1]
-__aeabi_llsr             0x801'e699          Code  Gb  U64Shr.o [5]
-__cmain                  0x801'fd71          Code  Gb  cmain.o [5]
-__exit                   0x801'fdad    0x14  Code  Gb  exit.o [6]
-__iar_Sin_accurate32     0x801'e485   0x1c8  Code  Lc  cos_sin_tan_32.o [4]
-__iar_copy_init3         0x801'd1c3    0x2a  Code  Gb  copy_init3.o [5]
-__iar_cos_accurate32     0x801'e675     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_cos_accuratef      0x801'e675     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_cos_medium32       0x801'e675     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_cos_mediumf        0x801'e675     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_cos_small32        0x801'e675     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_cos_smallf         0x801'e675     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_cosf               0x801'e675     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_data_init3         0x801'fd25    0x28  Code  Gb  data_init.o [5]
-__iar_init_vfp           0x801'fd4d          Code  Gb  fpinit_M.o [4]
-__iar_program_start      0x801'fde5          Code  Gb  cstartup_M.o [5]
-__iar_sin_accurate32     0x801'e679     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_sin_accuratef      0x801'e679     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_sin_medium32       0x801'e679     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_sin_mediumf        0x801'e679     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_sin_small32        0x801'e679     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_sin_smallf         0x801'e679     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_sinf               0x801'e679     0x4  Code  Gb  cos_sin_tan_32.o [4]
-__iar_zero_init3         0x801'fcc5    0x38  Code  Gb  zero_init3.o [5]
-__low_level_init         0x801'fd93     0x4  Code  Gb  low_level_init.o [2]
+                         0x801'e9c5          Code  Wk  startup_stm32g431xx.o [1]
+TIM8_UP_IRQHandler       0x801'e9c1          Code  Wk  startup_stm32g431xx.o [1]
+UART2_Init_921600        0x801'de43    0x48  Code  Gb  main.o [1]
+UART4_IRQHandler         0x801'e9d5          Code  Wk  startup_stm32g431xx.o [1]
+UART_SendPacket          0x801'de8b    0x1c  Code  Gb  main.o [1]
+UCPD1_IRQHandler         0x801'e9f1          Code  Wk  startup_stm32g431xx.o [1]
+USART1_IRQHandler        0x801'e9a5          Code  Wk  startup_stm32g431xx.o [1]
+USART2_IRQHandler        0x801'e9a9          Code  Wk  startup_stm32g431xx.o [1]
+USART3_IRQHandler        0x801'e9ad          Code  Wk  startup_stm32g431xx.o [1]
+USBWakeUp_IRQHandler     0x801'e9b9          Code  Wk  startup_stm32g431xx.o [1]
+USB_HP_IRQHandler        0x801'e95d          Code  Wk  startup_stm32g431xx.o [1]
+USB_LP_IRQHandler        0x801'e961          Code  Wk  startup_stm32g431xx.o [1]
+UsageFault_Handler       0x801'e901          Code  Wk  startup_stm32g431xx.o [1]
+WWDG_IRQHandler          0x801'e915          Code  Wk  startup_stm32g431xx.o [1]
+__cmain                  0x801'e7bd          Code  Gb  cmain.o [5]
+__exit                   0x801'e7f9    0x14  Code  Gb  exit.o [6]
+__iar_copy_init3         0x801'e71d    0x2a  Code  Gb  copy_init3.o [5]
+__iar_data_init3         0x801'e771    0x28  Code  Gb  data_init.o [5]
+__iar_init_vfp           0x801'e799          Code  Gb  fpinit_M.o [4]
+__iar_program_start      0x801'e831          Code  Gb  cstartup_M.o [5]
+__iar_zero_init3         0x801'e6e5    0x38  Code  Gb  zero_init3.o [5]
+__low_level_init         0x801'e7df     0x4  Code  Gb  low_level_init.o [2]
 __vector_table           0x800'0000          Data  Gb  startup_stm32g431xx.o [1]
-_call_main               0x801'fd7d          Code  Gb  cmain.o [5]
-_exit                    0x801'fd9d          Code  Gb  cexit.o [5]
-_exit_2                  0x801'fda1          Code  Gb  cexit_2.o [5]
+_call_main               0x801'e7c9          Code  Gb  cmain.o [5]
+_exit                    0x801'e7e9          Code  Gb  cexit.o [5]
+_exit_2                  0x801'e7ed          Code  Gb  cexit_2.o [5]
 armBitRevIndexTable1024
                          0x801'9f18   0xe10  Data  Gb  arm_common_tables.o [3]
-armBitRevIndexTable128   0x801'f754   0x1a0  Data  Gb  arm_common_tables.o [3]
-armBitRevIndexTable16    0x801'fcfc    0x28  Data  Gb  arm_common_tables.o [3]
+armBitRevIndexTable128   0x801'e174   0x1a0  Data  Gb  arm_common_tables.o [3]
+armBitRevIndexTable16    0x801'e748    0x28  Data  Gb  arm_common_tables.o [3]
 armBitRevIndexTable2048
                          0x801'6158  0x1dc0  Data  Gb  arm_common_tables.o [3]
-armBitRevIndexTable256   0x801'ddb4   0x370  Data  Gb  arm_common_tables.o [3]
-armBitRevIndexTable32    0x801'fc64    0x60  Data  Gb  arm_common_tables.o [3]
+armBitRevIndexTable256   0x801'd0ac   0x370  Data  Gb  arm_common_tables.o [3]
+armBitRevIndexTable32    0x801'e684    0x60  Data  Gb  arm_common_tables.o [3]
 armBitRevIndexTable4096
                          0x801'41d8  0x1f80  Data  Gb  arm_common_tables.o [3]
-armBitRevIndexTable512   0x801'da34   0x380  Data  Gb  arm_common_tables.o [3]
-armBitRevIndexTable64    0x801'fbf4    0x70  Data  Gb  arm_common_tables.o [3]
-arm_bitreversal_32       0x801'd1ed    0x46  Code  Gb  arm_bitreversal2.o [3]
-arm_cfft_f32             0x801'caad   0x184  Code  Gb  arm_cfft_f32.o [3]
-arm_cfft_init_f32        0x801'f2bd    0x98  Code  Gb  arm_cfft_init_f32.o [3]
-arm_cfft_radix8by2_f32   0x801'c52d   0x16a  Code  Gb  arm_cfft_f32.o [3]
-arm_cfft_radix8by4_f32   0x801'c699   0x412  Code  Gb  arm_cfft_f32.o [3]
+armBitRevIndexTable512   0x801'cd2c   0x380  Data  Gb  arm_common_tables.o [3]
+armBitRevIndexTable64    0x801'e614    0x70  Data  Gb  arm_common_tables.o [3]
+arm_cfft_init_f32        0x801'dcdd    0x98  Code  Gb  arm_cfft_init_f32.o [3]
 arm_cfft_sR_f32_len1024
-                         0x801'fe74    0x10  Data  Gb  arm_const_structs.o [3]
-arm_cfft_sR_f32_len128   0x801'fe44    0x10  Data  Gb  arm_const_structs.o [3]
-arm_cfft_sR_f32_len16    0x801'fe14    0x10  Data  Gb  arm_const_structs.o [3]
+                         0x801'e8b0    0x10  Data  Gb  arm_const_structs.o [3]
+arm_cfft_sR_f32_len128   0x801'e880    0x10  Data  Gb  arm_const_structs.o [3]
+arm_cfft_sR_f32_len16    0x801'e850    0x10  Data  Gb  arm_const_structs.o [3]
 arm_cfft_sR_f32_len2048
-                         0x801'fe84    0x10  Data  Gb  arm_const_structs.o [3]
-arm_cfft_sR_f32_len256   0x801'fe54    0x10  Data  Gb  arm_const_structs.o [3]
-arm_cfft_sR_f32_len32    0x801'fe24    0x10  Data  Gb  arm_const_structs.o [3]
+                         0x801'e8c0    0x10  Data  Gb  arm_const_structs.o [3]
+arm_cfft_sR_f32_len256   0x801'e890    0x10  Data  Gb  arm_const_structs.o [3]
+arm_cfft_sR_f32_len32    0x801'e860    0x10  Data  Gb  arm_const_structs.o [3]
 arm_cfft_sR_f32_len4096
-                         0x801'fe94    0x10  Data  Gb  arm_const_structs.o [3]
-arm_cfft_sR_f32_len512   0x801'fe64    0x10  Data  Gb  arm_const_structs.o [3]
-arm_cfft_sR_f32_len64    0x801'fe34    0x10  Data  Gb  arm_const_structs.o [3]
-arm_cmplx_mag_f32        0x801'f169   0x154  Code  Gb  arm_cmplx_mag_f32.o [3]
-arm_cos_f32              0x801'ee45    0x90  Code  Gb  arm_cos_f32.o [3]
-arm_mult_f32             0x801'eed5   0x10e  Code  Gb  arm_mult_f32.o [3]
-arm_radix8_butterfly_f32
-                         0x801'cc31   0x592  Code  Gb  arm_cfft_radix8_f32.o [3]
+                         0x801'e8d0    0x10  Data  Gb  arm_const_structs.o [3]
+arm_cfft_sR_f32_len512   0x801'e8a0    0x10  Data  Gb  arm_const_structs.o [3]
+arm_cfft_sR_f32_len64    0x801'e870    0x10  Data  Gb  arm_const_structs.o [3]
+arm_cos_f32              0x801'e0e5    0x90  Code  Gb  arm_cos_f32.o [3]
 arm_rfft_1024_fast_init_f32
-                         0x801'ed39    0x26  Code  Lc  arm_rfft_fast_init_f32.o [3]
+                         0x801'dbd1    0x26  Code  Lc  arm_rfft_fast_init_f32.o [3]
 arm_rfft_128_fast_init_f32
-                         0x801'eccd    0x22  Code  Lc  arm_rfft_fast_init_f32.o [3]
+                         0x801'db65    0x22  Code  Lc  arm_rfft_fast_init_f32.o [3]
 arm_rfft_2048_fast_init_f32
-                         0x801'ed5f    0x26  Code  Lc  arm_rfft_fast_init_f32.o [3]
+                         0x801'dbf7    0x26  Code  Lc  arm_rfft_fast_init_f32.o [3]
 arm_rfft_256_fast_init_f32
-                         0x801'ecef    0x24  Code  Lc  arm_rfft_fast_init_f32.o [3]
+                         0x801'db87    0x24  Code  Lc  arm_rfft_fast_init_f32.o [3]
 arm_rfft_32_fast_init_f32
-                         0x801'ec89    0x22  Code  Lc  arm_rfft_fast_init_f32.o [3]
+                         0x801'db21    0x22  Code  Lc  arm_rfft_fast_init_f32.o [3]
 arm_rfft_4096_fast_init_f32
-                         0x801'ed85    0x26  Code  Lc  arm_rfft_fast_init_f32.o [3]
+                         0x801'dc1d    0x26  Code  Lc  arm_rfft_fast_init_f32.o [3]
 arm_rfft_512_fast_init_f32
-                         0x801'ed13    0x26  Code  Lc  arm_rfft_fast_init_f32.o [3]
+                         0x801'dbab    0x26  Code  Lc  arm_rfft_fast_init_f32.o [3]
 arm_rfft_64_fast_init_f32
-                         0x801'ecab    0x22  Code  Lc  arm_rfft_fast_init_f32.o [3]
-arm_rfft_fast_f32        0x801'f12d    0x3a  Code  Gb  arm_rfft_fast_f32.o [3]
-arm_rfft_fast_init_f32   0x801'edab    0x5a  Code  Gb  arm_rfft_fast_init_f32.o [3]
-biquad_apply             0x801'e125    0x42  Code  Gb  imu.o [1]
-biquad_init_notch        0x801'e169    0x8e  Code  Gb  imu.o [1]
-cosf                     0x801'e675     0x4  Code  Gb  cos_sin_tan_32.o [4]
-dsp_buffer_ready        0x2000'1c8c     0x1  Data  Gb  dsp_manager.o [1]
-exit                     0x801'fd97     0x4  Code  Gb  exit.o [2]
-fft_handler             0x2000'1c68    0x18  Data  Lc  dsp_manager.o [1]
-fft_input               0x2000'0014   0x800  Data  Lc  dsp_manager.o [1]
-fft_output              0x2000'0814   0x800  Data  Lc  dsp_manager.o [1]
-filt_gx                 0x2000'1c80     0x4  Data  Gb  imu.o [1]
-gyro_bias_x             0x2000'1c84     0x4  Data  Gb  imu.o [1]
-hann_window             0x2000'1014   0x800  Data  Lc  dsp_manager.o [1]
-imu_flag                0x2000'1c8d     0x1  Data  Gb  main.o [1]
-m1_speed                0x2000'0000     0x4  Data  Gb  main.o [1]
-m2_speed                0x2000'0004     0x4  Data  Gb  main.o [1]
-m3_speed                0x2000'0008     0x4  Data  Gb  main.o [1]
-m4_speed                0x2000'000c     0x4  Data  Gb  main.o [1]
-magnitudes              0x2000'1814   0x400  Data  Lc  dsp_manager.o [1]
-main                     0x801'e6d5    0xaa  Code  Gb  main.o [1]
-merge_rfft_f32           0x801'f08d    0xa0  Code  Gb  arm_rfft_fast_f32.o [3]
-notch1                  0x2000'1c14    0x1c  Data  Gb  imu.o [1]
-notch2                  0x2000'1c30    0x1c  Data  Gb  imu.o [1]
-notch3                  0x2000'1c4c    0x1c  Data  Gb  imu.o [1]
-raw_gx                  0x2000'1c8a     0x2  Data  Gb  imu.o [1]
-sample_count            0x2000'1c88     0x2  Data  Lc  dsp_manager.o [1]
+                         0x801'db43    0x22  Code  Lc  arm_rfft_fast_init_f32.o [3]
+arm_rfft_fast_init_f32   0x801'dc43    0x5a  Code  Gb  arm_rfft_fast_init_f32.o [3]
+dsp_buffer_ready        0x2000'0018     0x1  Data  Gb  dsp_manager.o [1]
+exit                     0x801'e7e3     0x4  Code  Gb  exit.o [2]
+fft_handler             0x2000'081c    0x18  Data  Lc  dsp_manager.o [1]
+filt_gx                 0x2000'0870     0x4  Data  Gb  imu.o [1]
+gyro_bias_x             0x2000'0874     0x4  Data  Gb  imu.o [1]
+hann_window             0x2000'001c   0x800  Data  Lc  dsp_manager.o [1]
+imu_flag                0x2000'0000     0x1  Data  Gb  main.o [1]
+m1_speed                0x2000'0004     0x4  Data  Gb  main.o [1]
+m2_speed                0x2000'0008     0x4  Data  Gb  main.o [1]
+m3_speed                0x2000'000c     0x4  Data  Gb  main.o [1]
+m4_speed                0x2000'0010     0x4  Data  Gb  main.o [1]
+main                     0x801'dd75    0x82  Code  Gb  main.o [1]
+notch_fmac_coeffs       0x2000'0834    0x20  Data  Gb  imu.o [1]
+notch_fmac_state        0x2000'0854    0x18  Data  Gb  imu.o [1]
+raw_gx                  0x2000'086c     0x2  Data  Gb  imu.o [1]
+sample_count            0x2000'001a     0x2  Data  Lc  dsp_manager.o [1]
 sinTable_f32             0x801'ad28   0x804  Data  Gb  arm_common_tables.o [3]
-sinf                     0x801'e679     0x4  Code  Gb  cos_sin_tan_32.o [4]
-stage_rfft_f32           0x801'efe5    0xa8  Code  Gb  arm_rfft_fast_f32.o [3]
 twiddleCoef_1024         0x801'01d8  0x2000  Data  Gb  arm_common_tables.o [3]
-twiddleCoef_128          0x801'd234   0x400  Data  Gb  arm_common_tables.o [3]
-twiddleCoef_16           0x801'faf4    0x80  Data  Gb  arm_common_tables.o [3]
+twiddleCoef_128          0x801'c52c   0x400  Data  Gb  arm_common_tables.o [3]
+twiddleCoef_16           0x801'e514    0x80  Data  Gb  arm_common_tables.o [3]
 twiddleCoef_2048         0x800'81d8  0x4000  Data  Gb  arm_common_tables.o [3]
 twiddleCoef_256          0x801'b52c   0x800  Data  Gb  arm_common_tables.o [3]
-twiddleCoef_32           0x801'f8f4   0x100  Data  Gb  arm_common_tables.o [3]
+twiddleCoef_32           0x801'e314   0x100  Data  Gb  arm_common_tables.o [3]
 twiddleCoef_4096         0x800'01d8  0x8000  Data  Gb  arm_common_tables.o [3]
 twiddleCoef_512          0x801'7f18  0x1000  Data  Gb  arm_common_tables.o [3]
-twiddleCoef_64           0x801'f354   0x200  Data  Gb  arm_common_tables.o [3]
+twiddleCoef_64           0x801'd720   0x200  Data  Gb  arm_common_tables.o [3]
 twiddleCoef_rfft_1024    0x801'8f18  0x1000  Data  Gb  arm_common_tables.o [3]
-twiddleCoef_rfft_128     0x801'f554   0x200  Data  Gb  arm_common_tables.o [3]
+twiddleCoef_rfft_128     0x801'd920   0x200  Data  Gb  arm_common_tables.o [3]
 twiddleCoef_rfft_2048    0x801'21d8  0x2000  Data  Gb  arm_common_tables.o [3]
-twiddleCoef_rfft_256     0x801'd634   0x400  Data  Gb  arm_common_tables.o [3]
-twiddleCoef_rfft_32      0x801'fb74    0x80  Data  Gb  arm_common_tables.o [3]
+twiddleCoef_rfft_256     0x801'c92c   0x400  Data  Gb  arm_common_tables.o [3]
+twiddleCoef_rfft_32      0x801'e594    0x80  Data  Gb  arm_common_tables.o [3]
 twiddleCoef_rfft_4096    0x800'c1d8  0x4000  Data  Gb  arm_common_tables.o [3]
 twiddleCoef_rfft_512     0x801'bd2c   0x800  Data  Gb  arm_common_tables.o [3]
-twiddleCoef_rfft_64      0x801'f9f4   0x100  Data  Gb  arm_common_tables.o [3]
+twiddleCoef_rfft_64      0x801'e414   0x100  Data  Gb  arm_common_tables.o [3]
 
 
 [1] = C:\Users\vadychka\Documents\GitHub\leybl\fft\Debug\Obj
@@ -623,9 +557,9 @@ twiddleCoef_rfft_64      0x801'f9f4   0x100  Data  Gb  arm_common_tables.o [3]
 [5] = rt7M_tl.a
 [6] = shb_l.a
 
-    9'032 bytes of readonly  code memory
-  122'040 bytes of readonly  data memory
-    9'358 bytes of readwrite data memory
+    3'476 bytes of readonly  code memory
+  122'028 bytes of readonly  data memory
+    4'216 bytes of readwrite data memory
 
 Errors: none
 Warnings: none

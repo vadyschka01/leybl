@@ -1,33 +1,55 @@
 #include "imu.h"
 #include <math.h>
+#include "stm32g4xx.h"
+#include "stm32g431xx.h"
 
-volatile int16_t raw_ax, raw_ay, raw_az;
-volatile int16_t raw_gx, raw_gy, raw_gz;
+#ifndef FMAC_PARAM_FUNC_Pos
+#define FMAC_PARAM_FUNC_Pos   (0U)
+#define FMAC_PARAM_P_Pos      (8U)
+#define FMAC_PARAM_Q_Pos      (16U)
+#define FMAC_PARAM_RSHIFT_Pos (24U)
+#endif
+
+#ifndef FMAC_SR_VLD
+#define FMAC_SR_VLD           (1U << 0)
+
+#endif
+
+
+// Константы смещения в памяти FMAC (всего 256 слов)
+// Каждая Notch-секция (IIR 2-го порядка) требует:
+// 3 коэфф. B, 2 коэфф. A, 2 ячейки истории X, 2 ячейки истории Y.
+#define FMAC_MEM_SIZE      256
+#define STAGE_SIZE         10  // Резервируем с запасом под каждый каскад
+
+// raw_ax, raw_ay, raw_az удалены (не используются)
+volatile int16_t raw_gx; // Нужен только для гироскопа X
 float filt_gx;
 float gyro_bias_x = 0;
 
-// Сами фильтры
-biquad_t notch1, notch2, notch3;
+// notch1, notch2, notch3 удалены (заменены на notch_fmac_coeffs[3])
+// biquad_apply и biquad_init_notch удалены (больше не нужны с FMAC)
 
-float biquad_apply(biquad_t *f, float x) {
-    float out = f->b0 * x + f->d1;
-    f->d1 = f->b1 * x - f->a1 * out + f->d2;
-    f->d2 = f->b2 * x - f->a2 * out;
-    return out;
+fmac_coeffs_t notch_fmac_coeffs[3];
+fmac_state_t  notch_fmac_state[3];
+
+// 1. Инициализация (с правильной разметкой памяти)
+void FMAC_Init(void) {
+    RCC->AHB1ENR |= RCC_AHB1ENR_FMACEN;
+    RCC->AHB1RSTR |= RCC_AHB1RSTR_FMACRST;
+    for(volatile int i=0; i<100; i++);
+    RCC->AHB1RSTR &= ~RCC_AHB1RSTR_FMACRST;
+
+    // Конфигурация памяти: X1 (коэф), X2 (входы), Y (выходы)
+    FMAC->X1BUFCFG = (5 << 8) | (0 << 0); // 5 коэф. с адреса 0
+    FMAC->X2BUFCFG = (2 << 8) | (5 << 0); // 2 входа с адреса 5
+    FMAC->YBUFCFG  = (2 << 8) | (7 << 0); // 2 выхода с адреса 7
+
+    FMAC->CR = 0x01; // Включаем модуль
 }
 
-void biquad_init_notch(biquad_t *f, float center_freq, float Q, float fs) {
-    float w0 = 2.0f * 3.14159265f * center_freq / fs;
-    float alpha = sinf(w0) / (2.0f * Q);
-    float cosw0 = cosf(w0);
-    float a0 = 1.0f + alpha;
-    f->b0 = 1.0f / a0;
-    f->b1 = -2.0f * cosw0 / a0;
-    f->b2 = 1.0f / a0;
-    f->a1 = -2.0f * cosw0 / a0;
-    f->a2 = (1.0f - alpha) / a0;
-    f->d1 = 0; f->d2 = 0;
-}
+
+
 
 void I2C1_Init(void) {
     RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN;
@@ -76,10 +98,19 @@ void IMU_Init(void) {
     IMU_WriteReg(0x01, 0x01); // Bypass (отключаем встроенный фильтр для анализа)
     IMU_SetBank(0);
 
-    // Начальная инициализация ( на 0 Гц dsp_manager сам их включит)
-    biquad_init_notch(&notch1, 0, 1.0f, 1000.0f);
-    biquad_init_notch(&notch2, 0, 1.0f, 1000.0f);
-    biquad_init_notch(&notch3, 0, 1.0f, 1000.0f);
+    // b0 = 1.0 (в Q14 это 16384), остальные 0
+    for (int i = 0; i < 3; i++) {
+    notch_fmac_coeffs[i].b0 = 0; 
+    notch_fmac_coeffs[i].b1 = 0;
+    notch_fmac_coeffs[i].b2 = 0;
+    notch_fmac_coeffs[i].a1 = 0;
+    notch_fmac_coeffs[i].a2 = 0;
+    
+    notch_fmac_state[i].x1 = 0; 
+    notch_fmac_state[i].x2 = 0;
+    notch_fmac_state[i].y1 = 0; 
+    notch_fmac_state[i].y2 = 0;
+}
 }
 
 void IMU_Calibrate(void) {
@@ -99,11 +130,77 @@ void IMU_ReadRawData(void) {
     raw_gx = (int16_t)(buf[6] << 8 | buf[7]);
     float x = (float)raw_gx - gyro_bias_x;
 
-    // Последовательно применяем 3 режекторных фильтра
-    // dsp_manager будет менять их коэффициенты в фоновом режиме
-    x = biquad_apply(&notch1, x);
-    x = biquad_apply(&notch2, x);
-    x = biquad_apply(&notch3, x);
+    // ВМЕСТО ЭТОГО:
+    // x = biquad_apply(&notch1, x);
+    // x = biquad_apply(&notch2, x);
+    // x = biquad_apply(&notch3, x);
+
+    // ТЕПЕРЬ:
+    x = FMAC_Process_Sample(x);
 
     filt_gx = x;
+}
+
+void Update_FMAC_Coeffs(int stage, float b0, float b1, float b2, float a1, float a2) {
+    if (stage < 0 || stage > 2) return;
+    const float scale = 16384.0f; // Q14
+    
+    notch_fmac_coeffs[stage].b0 = (int16_t)(b0 * scale);
+    notch_fmac_coeffs[stage].b1 = (int16_t)(b1 * scale);
+    notch_fmac_coeffs[stage].b2 = (int16_t)(b2 * scale);
+    // Для FMAC знаки a1 и a2 инвертируем!
+    notch_fmac_coeffs[stage].a1 = (int16_t)(-a1 * scale);
+    notch_fmac_coeffs[stage].a2 = (int16_t)(-a2 * scale);
+}
+
+// Внутренняя функция для обработки одного каскада через FMAC
+// 2. Шаг вычислений (с защитой от зависания и обнуления)
+static int16_t FMAC_Step(fmac_coeffs_t *c, fmac_state_t *s, int16_t input) {
+    // Если фильтр в режиме Bypass (b0=16384, b1=0), просто возвращаем вход
+    if (c->b0 == 16384 && c->b1 == 0) return input;
+
+    // Сброс FIFO перед каждой операцией (критично для Polling режима)
+    FMAC->CR &= ~0x01; 
+    FMAC->CR |= 0x01;
+
+    // Пишем коэффы (5 штук)
+    FMAC->WDATA = c->b0; FMAC->WDATA = c->b1; FMAC->WDATA = c->b2;
+    FMAC->WDATA = c->a1; FMAC->WDATA = c->a2;
+    
+    // Пишем историю (4 штуки)
+    FMAC->WDATA = s->x1; FMAC->WDATA = s->x2;
+    FMAC->WDATA = s->y1; FMAC->WDATA = s->y2;
+
+    // Настройка: FUNC=8 (IIR), P=3, Q=2, RSHIFT=1 (бит 24)
+    // RSHIFT=1 компенсирует масштаб 16384
+    FMAC->PARAM = (1U << 24) | (2U << 16) | (3U << 8) | (8 << 0);
+    
+    FMAC->WDATA = input;
+    
+    uint32_t timeout = 1000;
+    while (!(FMAC->SR & 0x01) && --timeout);
+    
+    if (timeout == 0) return input; 
+
+    int16_t result = (int16_t)FMAC->RDATA;
+
+    // Если FMAC выдал ровно 0 при живом входе - это ошибка, возвращаем вход
+    if (result == 0 && input != 0) return input;
+
+    // Сохраняем состояние
+    s->x2 = s->x1; s->x1 = input;
+    s->y2 = s->y1; s->y1 = result;
+
+    return result;
+}
+
+// 3. Главная точка входа
+float FMAC_Process_Sample(float input) {
+    int16_t val = (int16_t)input;
+    
+    val = FMAC_Step(&notch_fmac_coeffs[0], &notch_fmac_state[0], val);
+    val = FMAC_Step(&notch_fmac_coeffs[1], &notch_fmac_state[1], val);
+    val = FMAC_Step(&notch_fmac_coeffs[2], &notch_fmac_state[2], val);
+    
+    return (float)val;
 }
