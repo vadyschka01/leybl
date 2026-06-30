@@ -3,7 +3,16 @@
     "${workspaceFolder}\\fft_az.eww": {
       "configs": {
         "${workspaceFolder}\\fft_az.ewp": "Debug"
+      },
+      "selected": {
+        "path": "${workspaceFolder}\\fft_az.ewp"
       }
     }
+  },
+  "workspace": {
+    "path": "${workspaceFolder}\\fft_az.eww"
+  },
+  "workbench": {
+    "path": "C:\\iar\\ewarm-9.70.1"
   }
 }

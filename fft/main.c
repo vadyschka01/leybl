@@ -34,9 +34,6 @@ int main(void) {
 
     I2C1_Init();
     UART2_Init_921600();
-    
-    FMAC_Init(); 
-
     IMU_Init();
     IMU_Calibrate();
     
@@ -48,24 +45,29 @@ int main(void) {
     Telemetry_t pkt;
     pkt.header[0] = 0xAA; pkt.header[1] = 0xBB;
 
-  
-    while (1) { 
-      if (imu_flag) {
-      imu_flag = 0;
+    while (1) {
+        if (imu_flag) {
+              imu_flag = 0;
 
-      IMU_ReadRawData(); // Теперь она внутри себя вызывает FMAC_Process_Sample
-      
-      
-      pkt.gx = raw_gx;
-      
-      pkt.filt_gx = (int16_t)filt_gx; // filt_gx обновится внутри IMU_ReadRawData
-      
+              IMU_ReadRawData(); 
 
-      UART_SendPacket(&pkt);
-      Set_Motor_Individual(m1_speed, m2_speed, m3_speed, m4_speed);
-      }
+              //сохраняем во временную переменную
+              int16_t gx_val = raw_gx; 
+              DSP_AddSample((float32_t)gx_val);
+
+              if (dsp_buffer_ready) {
+                  DSP_Process(); 
+              }
+
+              pkt.gx = gx_val;
+              pkt.filt_gx = (int16_t)filt_gx;
+              UART_SendPacket(&pkt);
+
+              Set_Motor_Individual(m1_speed, m2_speed, m3_speed, m4_speed);
+          }
+        }
     }
-}
+
 // 4. РЕАЛИЗАЦИЯ ФУНКЦИЙ (Тут был провал - их не хватало!)
 
 void SystemClock_Config_160MHz(void) {

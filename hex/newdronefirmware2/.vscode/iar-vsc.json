@@ -1,0 +1,18 @@
+{
+  "workspace": {
+    "path": "${workspaceFolder}\\Bird.eww"
+  },
+  "workspaces": {
+    "${workspaceFolder}\\Bird.eww": {
+      "configs": {
+        "${workspaceFolder}\\Bird.ewp": "Debug"
+      },
+      "selected": {
+        "path": "${workspaceFolder}\\Bird.ewp"
+      }
+    }
+  },
+  "workbench": {
+    "path": "C:\\iar\\ewarm-9.70.1"
+  }
+}

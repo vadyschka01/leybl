@@ -1,0 +1,7 @@
+settings/
+Debug/
+.vs/
+obj/
+bin/
+x64/
+x86/

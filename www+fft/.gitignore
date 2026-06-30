@@ -1,0 +1,18 @@
+# Сборка IAR
+Debug/
+Release/
+settings/
+*.dnx
+*.dep
+*.pyc
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.bak
+
+# Кэши редакторов
+.vscode/
+.cache/
+.cursor/
+*.idx
